@@ -1,0 +1,231 @@
+<?xml version="1.0"?>
+<h:html xmlns:h="http://www.w3.org/1999/xhtml" xmlns="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:jr="http://openrosa.org/javarosa" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <h:head>
+    <h:title>Fill This In</h:title>
+    <model>
+      <instance>
+        <faims id="Fill_This_In">
+          <style>
+            <orientation>
+              <orientation/>
+            </orientation>
+            <even>
+              <layout_weight/>
+            </even>
+            <large>
+              <layout_weight/>
+            </large>
+          </style>
+          <Login>
+            <Login>
+              <User/>
+              <Login/>
+            </Login>
+          </Login>
+          <Admin>
+            <Admin_Info>
+              <DoE_Site_School/>
+              <School_Code/>
+              <Principal_s_delegate_name/>
+              <Contractor_business_name/>
+              <Contractor_site_supervisor/>
+              <Record_Arrival_Time/>
+              <Arrival_first_day/>
+              <Personnel/>
+            </Admin_Info>
+            <Deliverable>
+              <Add_New_Work/>
+              <List_of_Completed_Works/>
+            </Deliverable>
+            <Recommendations>
+              <Recommendations/>
+              <Record_Departure_Time/>
+              <Departure_last_day/>
+              <Date_of_APZ_Completion/>
+              <Time_of_APZ_Completion/>
+              <Date_of_APZ_Handover/>
+              <Time_of_APZ_Handover/>
+              <Items_Items_to_be_resolved/>
+              <Cultural_Inspection_Notes/>
+            </Recommendations>
+          </Admin>
+          <Work>
+            <Work_Completed>
+              <Work_Completed/>
+              <Take_Before_Photograph/>
+              <Button_Take_Before_Photograph/>
+              <Take_After_Photograph/>
+              <Button_Take_After_Photograph/>
+              <Record_Work_Completed_at/>
+              <Work_Completed_at/>
+              <Location_Description/>
+              <Notes_Comments/>
+            </Work_Completed>
+          </Work>
+          <logic/>
+        </faims>
+      </instance>
+    </model>
+  </h:head>
+  <h:body>
+    <group ref="style">
+      <label/>
+      <group ref="orientation">
+        <label/>
+        <input ref="orientation">
+          <label>horizontal</label>
+        </input>
+      </group>
+      <group ref="even">
+        <label/>
+        <input ref="layout_weight">
+          <label>1</label>
+        </input>
+      </group>
+      <group ref="large">
+        <label/>
+        <input ref="layout_weight">
+          <label>3</label>
+        </input>
+      </group>
+    </group>
+    <group ref="Login">
+      <label>{Login}</label>
+      <group ref="Login">
+        <label>{Login}</label>
+        <select1 ref="User">
+          <label>{User}</label>
+          <item>
+            <label>Options not loaded</label>
+            <value>0</value>
+          </item>
+        </select1>
+        <trigger ref="Login">
+          <label>{Login}</label>
+        </trigger>
+      </group>
+    </group>
+    <group ref="Admin" faims_archent_type="Admin">
+      <label>{Admin}</label>
+      <group ref="Admin_Info">
+        <label>{Admin_Info}</label>
+        <input faims_attribute_type="measure" ref="DoE_Site_School" faims_attribute_name="DoE Site School">
+          <label>{DoE_Site__School_}</label>
+        </input>
+        <input faims_attribute_type="measure" ref="School_Code" faims_attribute_name="School Code">
+          <label>{School_Code}</label>
+        </input>
+        <input faims_attribute_type="measure" ref="Principal_s_delegate_name" faims_attribute_name="Principal s delegate name">
+          <label>{Principal_s_delegate__name_}</label>
+        </input>
+        <input faims_attribute_type="measure" ref="Contractor_business_name" faims_attribute_name="Contractor business name">
+          <label>{Contractor__business_name_}</label>
+        </input>
+        <input faims_attribute_type="measure" ref="Contractor_site_supervisor" faims_attribute_name="Contractor site supervisor">
+          <label>{Contractor__site_supervisor_}</label>
+        </input>
+        <trigger ref="Record_Arrival_Time">
+          <label>{Record_Arrival_Time}</label>
+        </trigger>
+        <input faims_attribute_type="measure" ref="Arrival_first_day" faims_attribute_name="Arrival first day" faims_read_only="true">
+          <label>{Arrival__first_day_}</label>
+        </input>
+        <input faims_attribute_type="measure" ref="Personnel" faims_attribute_name="Personnel">
+          <label>{Personnel}</label>
+        </input>
+      </group>
+      <group ref="Deliverable" faims_scrollable="false">
+        <label>{Deliverable}</label>
+        <trigger ref="Add_New_Work">
+          <label>{Add_New_Work}</label>
+        </trigger>
+        <select1 appearance="compact" ref="List_of_Completed_Works" faims_annotation="false" faims_certainty="false">
+          <label>{List_of_Completed_Works}</label>
+          <item>
+            <label>Options not loaded</label>
+            <value>0</value>
+          </item>
+        </select1>
+      </group>
+      <group ref="Recommendations">
+        <label>{Recommendations}</label>
+        <select faims_attribute_type="vocab" ref="Recommendations" faims_attribute_name="Recommendations">
+          <label>{Recommendations}</label>
+          <item>
+            <label>Options not loaded</label>
+            <value>0</value>
+          </item>
+        </select>
+        <trigger ref="Record_Departure_Time">
+          <label>{Record_Departure_Time}</label>
+        </trigger>
+        <input faims_attribute_type="measure" ref="Departure_last_day" faims_attribute_name="Departure last day" faims_read_only="true">
+          <label>{Departure__last_day_}</label>
+        </input>
+        <input faims_attribute_type="measure" ref="Date_of_APZ_Completion" faims_attribute_name="Date of APZ Completion">
+          <label>{Date_of_APZ_Completion}</label>
+        </input>
+        <input faims_attribute_type="measure" ref="Time_of_APZ_Completion" faims_attribute_name="Time of APZ Completion">
+          <label>{Time_of_APZ_Completion}</label>
+        </input>
+        <input faims_attribute_type="measure" ref="Date_of_APZ_Handover" faims_attribute_name="Date of APZ Handover">
+          <label>{Date_of_APZ_Handover}</label>
+        </input>
+        <input faims_attribute_type="measure" ref="Time_of_APZ_Handover" faims_attribute_name="Time of APZ Handover">
+          <label>{Time_of_APZ_Handover}</label>
+        </input>
+        <input faims_attribute_type="measure" ref="Items_Items_to_be_resolved" faims_attribute_name="Items Items to be resolved">
+          <label>{Items_Items_to_be_resolved}</label>
+        </input>
+        <input faims_attribute_type="measure" ref="Cultural_Inspection_Notes" faims_attribute_name="Cultural Inspection Notes">
+          <label>{Cultural_Inspection_Notes}</label>
+        </input>
+      </group>
+    </group>
+    <group ref="Work" faims_archent_type="Work">
+      <label>{Work}</label>
+      <group ref="Work_Completed">
+        <label>{Work_Completed}</label>
+        <select1 faims_attribute_type="vocab" ref="Work_Completed" faims_attribute_name="Work Completed">
+          <label>{Work_Completed}</label>
+          <item>
+            <label>Options not loaded</label>
+            <value>0</value>
+          </item>
+        </select1>
+        <select type="camera" faims_attribute_type="measure" faims_sync="true" ref="Take_Before_Photograph" faims_attribute_name="Take Before Photograph">
+          <label>{Take_Before_Photograph}</label>
+          <item>
+            <label>Options not loaded</label>
+            <value>0</value>
+          </item>
+        </select>
+        <trigger ref="Button_Take_Before_Photograph">
+          <label>{Button_Take_Before_Photograph}</label>
+        </trigger>
+        <select type="camera" faims_attribute_type="measure" faims_sync="true" ref="Take_After_Photograph" faims_attribute_name="Take After Photograph">
+          <label>{Take_After_Photograph}</label>
+          <item>
+            <label>Options not loaded</label>
+            <value>0</value>
+          </item>
+        </select>
+        <trigger ref="Button_Take_After_Photograph">
+          <label>{Button_Take_After_Photograph}</label>
+        </trigger>
+        <trigger ref="Record_Work_Completed_at">
+          <label>{Record_Work_Completed_at}</label>
+        </trigger>
+        <input faims_attribute_type="measure" ref="Work_Completed_at" faims_attribute_name="Work Completed at" faims_read_only="true">
+          <label>{Work_Completed_at}</label>
+        </input>
+        <input faims_attribute_type="measure" ref="Location_Description" faims_attribute_name="Location Description">
+          <label>{Location_Description}</label>
+        </input>
+        <input faims_attribute_type="measure" ref="Notes_Comments" faims_attribute_name="Notes Comments">
+          <label>{Notes_Comments}</label>
+        </input>
+      </group>
+    </group>
+  </h:body>
+</h:html>

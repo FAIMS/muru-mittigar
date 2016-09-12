@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="utf-8"?>
+<module suppressWarnings="true">
+
+<Login f="nodata">
+  <Login>
+    <User  t="dropdown" f="user"/>
+    <Login t="button"   l="Admin"/>
+  </Login>
+</Login>
+
+<Admin>
+  <Admin_Info>
+    <DoE_Site_School f="id">
+      DoE Site (School)
+      <str>
+        <fmt>$2: </fmt>
+        <pos>1</pos>
+      </str>
+    </DoE_Site_School>
+    <School_Code f="id">
+      <str>
+        <fmt>$2</fmt>
+        <pos>2</pos>
+      </str>
+    </School_Code>
+    <Principal_s_delegate_name>
+      Principal's delegate (name)
+    </Principal_s_delegate_name>
+    <Contractor_business_name>
+      Contractor (business name)
+    </Contractor_business_name>
+    <Contractor_site_supervisor>
+      Contractor (site supervisor)
+    </Contractor_site_supervisor>
+    <Record_Arrival_Time t="button"/>
+    <Arrival_first_day f="readonly">
+      Arrival (first day)
+    </Arrival_first_day>
+    <Personnel/>
+  </Admin_Info>
+  <Deliverable f="noscroll">
+    <Add_New_Work            t="button" lc="Work"/>
+    <List_of_Completed_Works t="list"   ec="Work"/>
+  </Deliverable>
+  <Recommendations>
+    <Recommendations t="checkbox">
+      <opts>
+        <opt>Maintain this area by current practices</opt>
+        <opt>Vegetation in the entire area must be maintained to the IPA Standard</opt>
+        <opt>Additional trees, shrubs and other plants not to be planted to exceed the IPA Standard</opt>
+        <opt>Fuel hazard must not be removed and maintained to the IPA Standard</opt>
+        <opt>Other</opt>
+      </opts>
+    </Recommendations>
+    <Record_Departure_Time t="button"/>
+    <Departure_last_day f="readonly">
+      Departure (last day)
+    </Departure_last_day>
+    <Date_of_APZ_Completion/>
+    <Time_of_APZ_Completion/>
+    <Date_of_APZ_Handover/>
+    <Time_of_APZ_Handover/>
+    <Items_Items_to_be_resolved>
+      Items/Items to be resolved
+    </Items_Items_to_be_resolved>
+    <Cultural_Inspection_Notes/>
+  </Recommendations>
+</Admin>
+
+<Work>
+  <Work_Completed>
+    <Work_Completed f="id">
+      <str>
+        <fmt>$1: </fmt>
+        <pos>1</pos>
+      </str>
+      <opts>
+        <opt>Deadwooding of limbs</opt>
+        <opt>Leaf Litter Removal</opt>
+        <opt>Tree Identification &amp; Removal</opt>
+        <opt>Stump Grinding (new &amp; existing)</opt>
+        <opt>Mulching</opt>
+        <opt>Seed Collection</opt>
+        <opt>Controlled Burn of zone/s</opt>
+        <opt>Future APZ recommendations</opt>
+        <opt>Other</opt>
+      </opts>
+    </Work_Completed>
+    <Take_Before_Photograph t="camera"/>
+    <Take_After_Photograph  t="camera"/>
+    <Record_Work_Completed_at t="button"/>
+    <Work_Completed_at f="id readonly">
+      <str>
+        <fmt>$2</fmt>
+        <pos>2</pos>
+      </str>
+    </Work_Completed_at>
+    <Location_Description/>
+    <Notes_Comments>
+      Notes/Comments
+    </Notes_Comments>
+  </Work_Completed>
+</Work>
+
+<logic><![CDATA[
+/********************************* VALIDATION *********************************/
+  Boolean validateLogin() {
+    String ref = "Login/Login/User";
+    String val = getFieldValue(ref);
+
+    if (isNull(val)) {
+      String head = "You must choose a User to log in";
+      String body = head;
+      showWarning(head, body);
+      return false;
+    }
+
+    return true;
+  }
+
+  // Overrides autogen's definition
+  onClickLoginLogin () {
+    if (!validateLogin()) {
+      return;
+    }
+    parentTabgroup__ = "Login";
+    newAdmin();
+  }
+
+/**************************** TIMESTAMP POPULATION ****************************/
+  void recordArrivalTime() {
+    String ref = "Admin/Admin_Info/Arrival_first_day";
+    setToTimestampNow(ref);
+  }
+
+  void recordDepartureTime() {
+    String ref = "Admin/Recommendations/Departure_last_day";
+    setToTimestampNow(ref);
+  }
+
+  void recordWorkCompletedat() {
+    String ref = "Work/Work_Completed/Work_Completed_at";
+    setToTimestampNow(ref);
+  }
+
+  addOnEvent("Admin/Admin_Info/Record_Arrival_Time",         "click", "recordArrivalTime()");
+  addOnEvent("Admin/Recommendations/Record_Departure_Time",  "click", "recordDepartureTime()");
+  addOnEvent("Work/Work_Completed/Record_Work_Completed_at", "click", "recordWorkCompletedat()");
+
+/************************ DATE/TIME PICKER POPULATION *************************/
+  void setFieldToLastDateInput(String ref) {
+    String date = getLastDateAlertInput();
+    setFieldValue(ref, date);
+  }
+
+  void setFieldToLastTimeInput(String ref) {
+    String date = getLastTimeAlertInput();
+    setFieldValue(ref, date);
+  }
+
+  void showDatePickerActions(String ref) {
+    String head  = "Select Date";
+    String body  = "";
+    String cbOk  = "setFieldToLastDateInput(\"" + ref + "\")";
+    String cbBad = "";
+    showDateAlert(head, body, cbOk, cbBad);
+  }
+
+  void showTimePickerActions(String ref) {
+    String head  = "Select Time";
+    String body  = "";
+    String cbOk  = "setFieldToLastTimeInput(\"" + ref + "\")";
+    String cbBad = "";
+    showTimeAlert(head, body, cbOk, cbBad);
+  }
+
+  void bindDatePicker(String ref) {
+    String cb = "showDatePickerActions(\"" + ref + "\")";
+    addOnEvent(ref, "focus", cb);
+  }
+
+  void bindTimePicker(String ref) {
+    String cb = "showTimePickerActions(\"" + ref + "\")";
+    addOnEvent(ref, "focus", cb);
+  }
+
+  bindDatePicker("Admin/Recommendations/Date_of_APZ_Completion");
+  bindDatePicker("Admin/Recommendations/Date_of_APZ_Handover");
+  bindTimePicker("Admin/Recommendations/Time_of_APZ_Completion");
+  bindTimePicker("Admin/Recommendations/Time_of_APZ_Handover");
+]]></logic>
+
+</module>
