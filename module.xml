@@ -1,23 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--@POSTPROC: ./postproc.sh-->
 <module suppressWarnings="true">
 
 <Login f="nodata">
-  <Login>
-    <User  t="dropdown" f="user"/>
-    <Login t="button"   l="Admin"/>
+  <Login f="noscroll">
+    <User  t="list" f="user" l="General"/>
   </Login>
 </Login>
 
+<General f="nodata">
+  <General>
+    <Create_New_Job t="button" l="Admin"/>
+  </General>
+  <search/>
+</General>
+
 <Admin>
   <Admin_Info>
-    <DoE_Site_School f="id">
+    <DoE_Site_School f="id notnull">
       DoE Site (School)
       <str>
         <fmt>$2: </fmt>
         <pos>1</pos>
       </str>
     </DoE_Site_School>
-    <School_Code f="id">
+    <School_Code f="id notnull">
       <str>
         <fmt>$2</fmt>
         <pos>2</pos>
@@ -39,8 +46,8 @@
     <Personnel/>
   </Admin_Info>
   <Deliverable f="noscroll">
-    <Add_New_Work            t="button" lc="Work"/>
-    <List_of_Completed_Works t="list"   ec="Work"/>
+    <Add_New_Task            t="button" lc="Task"/>
+    <List_of_Completed_Tasks t="list"   ec="Task"/>
   </Deliverable>
   <Recommendations>
     <Recommendations t="checkbox">
@@ -52,6 +59,7 @@
         <opt>Other</opt>
       </opts>
     </Recommendations>
+    <Recommendation_Notes/>
     <Record_Departure_Time t="button"/>
     <Departure_last_day f="readonly">
       Departure (last day)
@@ -67,9 +75,10 @@
   </Recommendations>
 </Admin>
 
-<Work>
-  <Work_Completed>
-    <Work_Completed f="id">
+<Task>
+  <Task_Completed>
+    <gps/>
+    <Completed_Task f="id notnull">
       <str>
         <fmt>$1: </fmt>
         <pos>1</pos>
@@ -85,48 +94,29 @@
         <opt>Future APZ recommendations</opt>
         <opt>Other</opt>
       </opts>
-    </Work_Completed>
-    <Take_Before_Photograph t="camera"/>
-    <Take_After_Photograph  t="camera"/>
-    <Record_Work_Completed_at t="button"/>
-    <Work_Completed_at f="id readonly">
+    </Completed_Task>
+    <Location_Description f="id notnull">
       <str>
-        <fmt>$2</fmt>
+        <fmt>$2: </fmt>
         <pos>2</pos>
       </str>
-    </Work_Completed_at>
-    <Location_Description/>
+    </Location_Description>
     <Notes_Comments>
       Notes/Comments
     </Notes_Comments>
-  </Work_Completed>
-</Work>
+    <Take_Before_Photograph t="camera"/>
+    <Take_After_Photograph  t="camera"/>
+    <Task_Completed t="button"/>
+    <Task_Completed_at f="id notnull readonly">
+      <str>
+        <fmt>$2: </fmt>
+        <pos>3</pos>
+      </str>
+    </Task_Completed_at>
+  </Task_Completed>
+</Task>
 
 <logic><![CDATA[
-/********************************* VALIDATION *********************************/
-  Boolean validateLogin() {
-    String ref = "Login/Login/User";
-    String val = getFieldValue(ref);
-
-    if (isNull(val)) {
-      String head = "You must choose a User to log in";
-      String body = head;
-      showWarning(head, body);
-      return false;
-    }
-
-    return true;
-  }
-
-  // Overrides autogen's definition
-  onClickLoginLogin () {
-    if (!validateLogin()) {
-      return;
-    }
-    parentTabgroup__ = "Login";
-    newAdmin();
-  }
-
 /**************************** TIMESTAMP POPULATION ****************************/
   void recordArrivalTime() {
     String ref = "Admin/Admin_Info/Arrival_first_day";
@@ -138,14 +128,14 @@
     setToTimestampNow(ref);
   }
 
-  void recordWorkCompletedat() {
-    String ref = "Work/Work_Completed/Work_Completed_at";
+  void recordTaskCompletedat() {
+    String ref = "Task/Task_Completed/Task_Completed_at";
     setToTimestampNow(ref);
   }
 
   addOnEvent("Admin/Admin_Info/Record_Arrival_Time",         "click", "recordArrivalTime()");
   addOnEvent("Admin/Recommendations/Record_Departure_Time",  "click", "recordDepartureTime()");
-  addOnEvent("Work/Work_Completed/Record_Work_Completed_at", "click", "recordWorkCompletedat()");
+  addOnEvent("Task/Task_Completed/Task_Completed",           "click", "recordTaskCompletedat()");
 
 /************************ DATE/TIME PICKER POPULATION *************************/
   void setFieldToLastDateInput(String ref) {

@@ -19,9 +19,25 @@
           <Login>
             <Login>
               <User/>
-              <Login/>
             </Login>
           </Login>
+          <General>
+            <General>
+              <Create_New_Job/>
+            </General>
+            <Search>
+              <Colgroup_0>
+                <Col_0>
+                  <Search_Term/>
+                </Col_0>
+                <Col_1>
+                  <Search_Button/>
+                </Col_1>
+              </Colgroup_0>
+              <Entity_Types/>
+              <Entity_List/>
+            </Search>
+          </General>
           <Admin>
             <Admin_Info>
               <DoE_Site_School/>
@@ -34,11 +50,12 @@
               <Personnel/>
             </Admin_Info>
             <Deliverable>
-              <Add_New_Work/>
-              <List_of_Completed_Works/>
+              <Add_New_Task/>
+              <List_of_Completed_Tasks/>
             </Deliverable>
             <Recommendations>
               <Recommendations/>
+              <Recommendation_Notes/>
               <Record_Departure_Time/>
               <Departure_last_day/>
               <Date_of_APZ_Completion/>
@@ -49,19 +66,39 @@
               <Cultural_Inspection_Notes/>
             </Recommendations>
           </Admin>
-          <Work>
-            <Work_Completed>
-              <Work_Completed/>
+          <Task>
+            <Task_Completed>
+              <Colgroup_GPS_0>
+                <Col_0>
+                  <Latitude/>
+                </Col_0>
+                <Col_1>
+                  <Longitude/>
+                </Col_1>
+              </Colgroup_GPS_0>
+              <Colgroup_GPS_1>
+                <Col_0>
+                  <Northing/>
+                </Col_0>
+                <Col_1>
+                  <Easting/>
+                </Col_1>
+                <Col_2>
+                  <Accuracy/>
+                </Col_2>
+              </Colgroup_GPS_1>
+              <Take_From_GPS/>
+              <Completed_Task/>
+              <Location_Description/>
+              <Notes_Comments/>
               <Take_Before_Photograph/>
               <Button_Take_Before_Photograph/>
               <Take_After_Photograph/>
               <Button_Take_After_Photograph/>
-              <Record_Work_Completed_at/>
-              <Work_Completed_at/>
-              <Location_Description/>
-              <Notes_Comments/>
-            </Work_Completed>
-          </Work>
+              <Task_Completed/>
+              <Task_Completed_at/>
+            </Task_Completed>
+          </Task>
           <logic/>
         </faims>
       </instance>
@@ -91,28 +128,66 @@
     </group>
     <group ref="Login">
       <label>{Login}</label>
-      <group ref="Login">
+      <group ref="Login" faims_scrollable="false">
         <label>{Login}</label>
-        <select1 ref="User">
+        <select1 appearance="compact" ref="User">
           <label>{User}</label>
           <item>
             <label>Options not loaded</label>
             <value>0</value>
           </item>
         </select1>
-        <trigger ref="Login">
-          <label>{Login}</label>
+      </group>
+    </group>
+    <group ref="General">
+      <label>{General}</label>
+      <group ref="General">
+        <label>{General}</label>
+        <trigger ref="Create_New_Job">
+          <label>{Create_New_Job}</label>
         </trigger>
+      </group>
+      <group ref="Search" faims_scrollable="false">
+        <label>{search}</label>
+        <group faims_style="orientation" ref="Colgroup_0">
+          <label/>
+          <group faims_style="even" ref="Col_0">
+            <label/>
+            <input ref="Search_Term">
+              <label>{Search_Term}</label>
+            </input>
+          </group>
+          <group faims_style="large" ref="Col_1">
+            <label/>
+            <trigger ref="Search_Button">
+              <label>{Search}</label>
+            </trigger>
+          </group>
+        </group>
+        <select1 ref="Entity_Types">
+          <label>{Entity_Types}</label>
+          <item>
+            <label>Options not loaded</label>
+            <value>Options not loaded</value>
+          </item>
+        </select1>
+        <select1 appearance="compact" ref="Entity_List">
+          <label>{Entity_List}</label>
+          <item>
+            <label>Options not loaded</label>
+            <value>Options not loaded</value>
+          </item>
+        </select1>
       </group>
     </group>
     <group ref="Admin" faims_archent_type="Admin">
       <label>{Admin}</label>
       <group ref="Admin_Info">
         <label>{Admin_Info}</label>
-        <input faims_attribute_type="measure" ref="DoE_Site_School" faims_attribute_name="DoE Site School">
+        <input faims_attribute_type="measure" ref="DoE_Site_School" faims_attribute_name="DoE Site School" faims_style_class="required">
           <label>{DoE_Site__School_}</label>
         </input>
-        <input faims_attribute_type="measure" ref="School_Code" faims_attribute_name="School Code">
+        <input faims_attribute_type="measure" ref="School_Code" faims_attribute_name="School Code" faims_style_class="required">
           <label>{School_Code}</label>
         </input>
         <input faims_attribute_type="measure" ref="Principal_s_delegate_name" faims_attribute_name="Principal s delegate name">
@@ -136,11 +211,11 @@
       </group>
       <group ref="Deliverable" faims_scrollable="false">
         <label>{Deliverable}</label>
-        <trigger ref="Add_New_Work">
-          <label>{Add_New_Work}</label>
+        <trigger ref="Add_New_Task">
+          <label>{Add_New_Task}</label>
         </trigger>
-        <select1 appearance="compact" ref="List_of_Completed_Works" faims_annotation="false" faims_certainty="false">
-          <label>{List_of_Completed_Works}</label>
+        <select1 appearance="compact" ref="List_of_Completed_Tasks" faims_annotation="false" faims_certainty="false">
+          <label>{List_of_Completed_Tasks}</label>
           <item>
             <label>Options not loaded</label>
             <value>0</value>
@@ -156,6 +231,9 @@
             <value>0</value>
           </item>
         </select>
+        <input faims_attribute_type="measure" ref="Recommendation_Notes" faims_attribute_name="Recommendation Notes">
+          <label>{Recommendation_Notes}</label>
+        </input>
         <trigger ref="Record_Departure_Time">
           <label>{Record_Departure_Time}</label>
         </trigger>
@@ -182,17 +260,62 @@
         </input>
       </group>
     </group>
-    <group ref="Work" faims_archent_type="Work">
-      <label>{Work}</label>
-      <group ref="Work_Completed">
-        <label>{Work_Completed}</label>
-        <select1 faims_attribute_type="vocab" ref="Work_Completed" faims_attribute_name="Work Completed">
-          <label>{Work_Completed}</label>
+    <group ref="Task" faims_archent_type="Task">
+      <label>{Task}</label>
+      <group ref="Task_Completed">
+        <label>{Task_Completed}</label>
+        <group ref="Colgroup_GPS_0" faims_style="orientation">
+          <label/>
+          <group ref="Col_0" faims_style="even">
+            <label/>
+            <input ref="Latitude" faims_attribute_name="Latitude" faims_attribute_type="measure" faims_read_only="true" faims_annotation="false" faims_certainty="false">
+              <label>{Latitude}</label>
+            </input>
+          </group>
+          <group ref="Col_1" faims_style="even">
+            <label/>
+            <input ref="Longitude" faims_attribute_name="Longitude" faims_attribute_type="measure" faims_read_only="true" faims_annotation="false" faims_certainty="false">
+              <label>{Longitude}</label>
+            </input>
+          </group>
+        </group>
+        <group ref="Colgroup_GPS_1" faims_style="orientation">
+          <label/>
+          <group ref="Col_0" faims_style="even">
+            <label/>
+            <input ref="Northing" faims_attribute_name="Northing" faims_attribute_type="measure" faims_read_only="true" faims_annotation="false" faims_certainty="false">
+              <label>{Northing}</label>
+            </input>
+          </group>
+          <group ref="Col_1" faims_style="even">
+            <label/>
+            <input ref="Easting" faims_attribute_name="Easting" faims_attribute_type="measure" faims_read_only="true" faims_annotation="false" faims_certainty="false">
+              <label>{Easting}</label>
+            </input>
+          </group>
+          <group ref="Col_2" faims_style="even">
+            <label/>
+            <input ref="Accuracy" faims_attribute_name="Accuracy" faims_attribute_type="measure" faims_read_only="true" faims_annotation="false" faims_certainty="false">
+              <label>{Accuracy__m_}</label>
+            </input>
+          </group>
+        </group>
+        <trigger ref="Take_From_GPS">
+          <label>{Take_From_GPS}</label>
+        </trigger>
+        <select1 faims_attribute_type="vocab" ref="Completed_Task" faims_attribute_name="Completed Task" faims_style_class="required">
+          <label>{Completed_Task}</label>
           <item>
             <label>Options not loaded</label>
             <value>0</value>
           </item>
         </select1>
+        <input faims_attribute_type="measure" ref="Location_Description" faims_attribute_name="Location Description" faims_style_class="required">
+          <label>{Location_Description}</label>
+        </input>
+        <input faims_attribute_type="measure" ref="Notes_Comments" faims_attribute_name="Notes Comments">
+          <label>{Notes_Comments}</label>
+        </input>
         <select type="camera" faims_attribute_type="measure" faims_sync="true" ref="Take_Before_Photograph" faims_attribute_name="Take Before Photograph">
           <label>{Take_Before_Photograph}</label>
           <item>
@@ -213,17 +336,11 @@
         <trigger ref="Button_Take_After_Photograph">
           <label>{Button_Take_After_Photograph}</label>
         </trigger>
-        <trigger ref="Record_Work_Completed_at">
-          <label>{Record_Work_Completed_at}</label>
+        <trigger ref="Task_Completed">
+          <label>{Task_Completed}</label>
         </trigger>
-        <input faims_attribute_type="measure" ref="Work_Completed_at" faims_attribute_name="Work Completed at" faims_read_only="true">
-          <label>{Work_Completed_at}</label>
-        </input>
-        <input faims_attribute_type="measure" ref="Location_Description" faims_attribute_name="Location Description">
-          <label>{Location_Description}</label>
-        </input>
-        <input faims_attribute_type="measure" ref="Notes_Comments" faims_attribute_name="Notes Comments">
-          <label>{Notes_Comments}</label>
+        <input faims_attribute_type="measure" ref="Task_Completed_at" faims_attribute_name="Task Completed at" faims_read_only="true" faims_style_class="required">
+          <label>{Task_Completed_at}</label>
         </input>
       </group>
     </group>
