@@ -9,7 +9,7 @@
 </Login>
 
 <General f="nodata">
-  <General>
+  <General f="noscroll">
     <Create_New_Job        t="button" l="Site_Admin"/>
     <List_of_Existing_Jobs t="list"   e="Site_Admin"/>
   </General>

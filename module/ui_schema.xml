@@ -142,7 +142,7 @@
     </group>
     <group ref="General">
       <label>{General}</label>
-      <group ref="General">
+      <group ref="General" faims_scrollable="false">
         <label>{General}</label>
         <trigger ref="Create_New_Job">
           <label>{Create_New_Job}</label>
