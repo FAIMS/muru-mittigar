@@ -10,12 +10,13 @@
 
 <General f="nodata">
   <General>
-    <Create_New_Job t="button" l="Admin"/>
+    <Create_New_Job        t="button" l="Site_Admin"/>
+    <List_of_Existing_Jobs t="list"   e="Site_Admin"/>
   </General>
   <search/>
 </General>
 
-<Admin>
+<Site_Admin>
   <Admin_Info>
     <DoE_Site_School f="id notnull">
       DoE Site (School)
@@ -73,10 +74,11 @@
     </Items_Items_to_be_resolved>
     <Cultural_Inspection_Notes/>
   </Recommendations>
-</Admin>
+</Site_Admin>
 
 <Task>
   <Task_Completed>
+    <Photo_Before t="camera"/>
     <gps/>
     <Completed_Task f="id notnull">
       <str>
@@ -104,8 +106,7 @@
     <Notes_Comments>
       Notes/Comments
     </Notes_Comments>
-    <Take_Before_Photograph t="camera"/>
-    <Take_After_Photograph  t="camera"/>
+    <Photo_After  t="camera"/>
     <Task_Completed t="button"/>
     <Task_Completed_at f="id notnull readonly">
       <str>
@@ -119,12 +120,12 @@
 <logic><![CDATA[
 /**************************** TIMESTAMP POPULATION ****************************/
   void recordArrivalTime() {
-    String ref = "Admin/Admin_Info/Arrival_first_day";
+    String ref = "Site_Admin/Admin_Info/Arrival_first_day";
     setToTimestampNow(ref);
   }
 
   void recordDepartureTime() {
-    String ref = "Admin/Recommendations/Departure_last_day";
+    String ref = "Site_Admin/Recommendations/Departure_last_day";
     setToTimestampNow(ref);
   }
 
@@ -133,9 +134,9 @@
     setToTimestampNow(ref);
   }
 
-  addOnEvent("Admin/Admin_Info/Record_Arrival_Time",         "click", "recordArrivalTime()");
-  addOnEvent("Admin/Recommendations/Record_Departure_Time",  "click", "recordDepartureTime()");
-  addOnEvent("Task/Task_Completed/Task_Completed",           "click", "recordTaskCompletedat()");
+  addOnEvent("Site_Admin/Admin_Info/Record_Arrival_Time",        "click", "recordArrivalTime()");
+  addOnEvent("Site_Admin/Recommendations/Record_Departure_Time", "click", "recordDepartureTime()");
+  addOnEvent("Task/Task_Completed/Task_Completed",               "click", "recordTaskCompletedat()");
 
 /************************ DATE/TIME PICKER POPULATION *************************/
   void setFieldToLastDateInput(String ref) {
@@ -174,10 +175,10 @@
     addOnEvent(ref, "focus", cb);
   }
 
-  bindDatePicker("Admin/Recommendations/Date_of_APZ_Completion");
-  bindDatePicker("Admin/Recommendations/Date_of_APZ_Handover");
-  bindTimePicker("Admin/Recommendations/Time_of_APZ_Completion");
-  bindTimePicker("Admin/Recommendations/Time_of_APZ_Handover");
+  bindDatePicker("Site_Admin/Recommendations/Date_of_APZ_Completion");
+  bindDatePicker("Site_Admin/Recommendations/Date_of_APZ_Handover");
+  bindTimePicker("Site_Admin/Recommendations/Time_of_APZ_Completion");
+  bindTimePicker("Site_Admin/Recommendations/Time_of_APZ_Handover");
 ]]></logic>
 
 </module>

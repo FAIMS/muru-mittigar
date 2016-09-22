@@ -24,6 +24,7 @@
           <General>
             <General>
               <Create_New_Job/>
+              <List_of_Existing_Jobs/>
             </General>
             <Search>
               <Colgroup_0>
@@ -38,7 +39,7 @@
               <Entity_List/>
             </Search>
           </General>
-          <Admin>
+          <Site_Admin>
             <Admin_Info>
               <DoE_Site_School/>
               <School_Code/>
@@ -65,9 +66,11 @@
               <Items_Items_to_be_resolved/>
               <Cultural_Inspection_Notes/>
             </Recommendations>
-          </Admin>
+          </Site_Admin>
           <Task>
             <Task_Completed>
+              <Photo_Before/>
+              <Button_Photo_Before/>
               <Colgroup_GPS_0>
                 <Col_0>
                   <Latitude/>
@@ -91,10 +94,8 @@
               <Completed_Task/>
               <Location_Description/>
               <Notes_Comments/>
-              <Take_Before_Photograph/>
-              <Button_Take_Before_Photograph/>
-              <Take_After_Photograph/>
-              <Button_Take_After_Photograph/>
+              <Photo_After/>
+              <Button_Photo_After/>
               <Task_Completed/>
               <Task_Completed_at/>
             </Task_Completed>
@@ -146,6 +147,13 @@
         <trigger ref="Create_New_Job">
           <label>{Create_New_Job}</label>
         </trigger>
+        <select1 appearance="compact" ref="List_of_Existing_Jobs" faims_annotation="false" faims_certainty="false">
+          <label>{List_of_Existing_Jobs}</label>
+          <item>
+            <label>Options not loaded</label>
+            <value>0</value>
+          </item>
+        </select1>
       </group>
       <group ref="Search" faims_scrollable="false">
         <label>{search}</label>
@@ -180,8 +188,8 @@
         </select1>
       </group>
     </group>
-    <group ref="Admin" faims_archent_type="Admin">
-      <label>{Admin}</label>
+    <group ref="Site_Admin" faims_archent_type="Site Admin">
+      <label>{Site_Admin}</label>
       <group ref="Admin_Info">
         <label>{Admin_Info}</label>
         <input faims_attribute_type="measure" ref="DoE_Site_School" faims_attribute_name="DoE Site School" faims_style_class="required">
@@ -264,6 +272,16 @@
       <label>{Task}</label>
       <group ref="Task_Completed">
         <label>{Task_Completed}</label>
+        <select type="camera" faims_attribute_type="measure" faims_sync="true" ref="Photo_Before" faims_attribute_name="Photo Before">
+          <label>{Photo_Before}</label>
+          <item>
+            <label>Options not loaded</label>
+            <value>0</value>
+          </item>
+        </select>
+        <trigger ref="Button_Photo_Before">
+          <label>{Button_Photo_Before}</label>
+        </trigger>
         <group ref="Colgroup_GPS_0" faims_style="orientation">
           <label/>
           <group ref="Col_0" faims_style="even">
@@ -316,25 +334,15 @@
         <input faims_attribute_type="measure" ref="Notes_Comments" faims_attribute_name="Notes Comments">
           <label>{Notes_Comments}</label>
         </input>
-        <select type="camera" faims_attribute_type="measure" faims_sync="true" ref="Take_Before_Photograph" faims_attribute_name="Take Before Photograph">
-          <label>{Take_Before_Photograph}</label>
+        <select type="camera" faims_attribute_type="measure" faims_sync="true" ref="Photo_After" faims_attribute_name="Photo After">
+          <label>{Photo_After}</label>
           <item>
             <label>Options not loaded</label>
             <value>0</value>
           </item>
         </select>
-        <trigger ref="Button_Take_Before_Photograph">
-          <label>{Button_Take_Before_Photograph}</label>
-        </trigger>
-        <select type="camera" faims_attribute_type="measure" faims_sync="true" ref="Take_After_Photograph" faims_attribute_name="Take After Photograph">
-          <label>{Take_After_Photograph}</label>
-          <item>
-            <label>Options not loaded</label>
-            <value>0</value>
-          </item>
-        </select>
-        <trigger ref="Button_Take_After_Photograph">
-          <label>{Button_Take_After_Photograph}</label>
+        <trigger ref="Button_Photo_After">
+          <label>{Button_Photo_After}</label>
         </trigger>
         <trigger ref="Task_Completed">
           <label>{Task_Completed}</label>

@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <ValidationSchema>
-  <ArchaeologicalElement name="Admin">
+  <ArchaeologicalElement name="Site_Admin">
     <property name="DoE Site School">
       <validator type="blankchecker">
         <param value="measure" type="field"/>
