@@ -102,7 +102,7 @@
   </ArchaeologicalElement>
   <ArchaeologicalElement name="Task">
     <description/>
-    <property name="Completed Task" isIdentifier="true" type="vocab">
+    <property name="Task Type" isIdentifier="true" type="vocab">
       <description/>
       <formatString><![CDATA[$1: ]]></formatString>
       <appendCharacterString><![CDATA[ - ]]></appendCharacterString>
@@ -132,22 +132,35 @@
       <formatString><![CDATA[$2: ]]></formatString>
       <appendCharacterString><![CDATA[ - ]]></appendCharacterString>
     </property>
-    <property name="Task Completed at" isIdentifier="true" type="measure">
+    <property name="Task Closed at" isIdentifier="true" type="measure">
       <description/>
       <formatString><![CDATA[$2: ]]></formatString>
       <appendCharacterString><![CDATA[ - ]]></appendCharacterString>
     </property>
-    <property name="Photo Before" type="file" file="true" thumbnail="true">
+    <property name="Before Photo" type="file" file="true" thumbnail="true">
+      <description/>
+      <formatString><![CDATA[{{if $1 then $1}}{{if and($1, $2) then " " }}{{if $2 then $2}}{{if $3 then " ($3)"}}{{if between($4,0,0.49) then "??" elsif lessThan($4,1) then "?" }}]]></formatString>
+      <appendCharacterString><![CDATA[ - ]]></appendCharacterString>
+    </property>
+    <property name="State of Completion" type="vocab">
+      <description/>
+      <formatString><![CDATA[{{if $1 then $1}}{{if and($1, $2) then " " }}{{if $2 then $2}}{{if $3 then " ($3)"}}{{if between($4,0,0.49) then "??" elsif lessThan($4,1) then "?" }}]]></formatString>
+      <appendCharacterString><![CDATA[ - ]]></appendCharacterString>
+      <lookup>
+        <term>{Complete}
+<description/></term>
+        <term>{Partially_Complete}
+<description/></term>
+        <term>{Not_Attempted}
+<description/></term>
+      </lookup>
+    </property>
+    <property name="After Photo" type="file" file="true" thumbnail="true">
       <description/>
       <formatString><![CDATA[{{if $1 then $1}}{{if and($1, $2) then " " }}{{if $2 then $2}}{{if $3 then " ($3)"}}{{if between($4,0,0.49) then "??" elsif lessThan($4,1) then "?" }}]]></formatString>
       <appendCharacterString><![CDATA[ - ]]></appendCharacterString>
     </property>
     <property name="Notes Comments" type="measure">
-      <description/>
-      <formatString><![CDATA[{{if $1 then $1}}{{if and($1, $2) then " " }}{{if $2 then $2}}{{if $3 then " ($3)"}}{{if between($4,0,0.49) then "??" elsif lessThan($4,1) then "?" }}]]></formatString>
-      <appendCharacterString><![CDATA[ - ]]></appendCharacterString>
-    </property>
-    <property name="Photo After" type="file" file="true" thumbnail="true">
       <description/>
       <formatString><![CDATA[{{if $1 then $1}}{{if and($1, $2) then " " }}{{if $2 then $2}}{{if $3 then " ($3)"}}{{if between($4,0,0.49) then "??" elsif lessThan($4,1) then "?" }}]]></formatString>
       <appendCharacterString><![CDATA[ - ]]></appendCharacterString>

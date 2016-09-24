@@ -47,8 +47,8 @@
     <Personnel/>
   </Admin_Info>
   <Deliverable f="noscroll">
-    <Add_New_Task            t="button" lc="Task"/>
-    <List_of_Completed_Tasks t="list"   ec="Task"/>
+    <Add_Task      t="button" lc="Task"/>
+    <List_of_Tasks t="list"   ec="Task"/>
   </Deliverable>
   <Recommendations>
     <Recommendations t="checkbox">
@@ -77,10 +77,8 @@
 </Site_Admin>
 
 <Task>
-  <Task_Completed>
-    <Photo_Before t="camera"/>
-    <gps/>
-    <Completed_Task f="id notnull">
+  <Task>
+    <Task_Type f="id notnull">
       <str>
         <fmt>$1: </fmt>
         <pos>1</pos>
@@ -96,47 +94,74 @@
         <opt>Future APZ recommendations</opt>
         <opt>Other</opt>
       </opts>
-    </Completed_Task>
+    </Task_Type>
     <Location_Description f="id notnull">
       <str>
         <fmt>$2: </fmt>
         <pos>2</pos>
       </str>
     </Location_Description>
-    <Notes_Comments>
-      Notes/Comments
-    </Notes_Comments>
-    <Photo_After  t="camera"/>
-    <Task_Completed t="button"/>
-    <Task_Completed_at f="id notnull readonly">
+    <gps/>
+    <Before_Photo t="camera"/>
+    <State_of_Completion>
+      <opts>
+        <opt>Complete</opt>
+        <opt>Partially Complete</opt>
+        <opt>Not Attempted</opt>
+      </opts>
+    </State_of_Completion>
+    <After_Photo  t="camera"/>
+    <Task_Closed t="button"/>
+    <Task_Closed_at f="id notnull readonly">
       <str>
         <fmt>$2: </fmt>
         <pos>3</pos>
       </str>
-    </Task_Completed_at>
-  </Task_Completed>
+    </Task_Closed_at>
+    <Notes_Comments>
+      Notes/Comments
+    </Notes_Comments>
+  </Task>
 </Task>
 
 <logic><![CDATA[
 /**************************** TIMESTAMP POPULATION ****************************/
-  void recordArrivalTime() {
+  void recordArrivalTime(String val) {
     String ref = "Site_Admin/Admin_Info/Arrival_first_day";
-    setToTimestampNow(ref);
+
+    if (val == null) setToTimestampNow(ref);
+    else             setFieldValue    (ref, val);
   }
 
-  void recordDepartureTime() {
+  void recordDepartureTime(String val) {
     String ref = "Site_Admin/Recommendations/Departure_last_day";
-    setToTimestampNow(ref);
+
+    if (val == null) setToTimestampNow(ref);
+    else             setFieldValue    (ref, val);
   }
 
-  void recordTaskCompletedat() {
-    String ref = "Task/Task_Completed/Task_Completed_at";
-    setToTimestampNow(ref);
+  void recordTaskClosedAt(String val) {
+    String ref = "Task/Task/Task_Closed_at";
+
+    if (val == null) setToTimestampNow(ref);
+    else             setFieldValue    (ref, val);
   }
+
+  void recordArrivalTime()   { recordArrivalTime  (null); }
+  void recordDepartureTime() { recordDepartureTime(null); }
+  void recordTaskClosedAt()  { recordTaskClosedAt (null); }
+
+  void clearArrivalTime()    { recordArrivalTime  (""); }
+  void clearDepartureTime()  { recordDepartureTime(""); }
+  void clearTaskClosedAt()   { recordTaskClosedAt (""); }
 
   addOnEvent("Site_Admin/Admin_Info/Record_Arrival_Time",        "click", "recordArrivalTime()");
   addOnEvent("Site_Admin/Recommendations/Record_Departure_Time", "click", "recordDepartureTime()");
-  addOnEvent("Task/Task_Completed/Task_Completed",               "click", "recordTaskCompletedat()");
+  addOnEvent("Task/Task/Task_Closed",                            "click", "recordTaskClosedAt()");
+
+  addOnEvent("Site_Admin", "copy", "clearArrivalTime()");
+  addOnEvent("Site_Admin", "copy", "clearDepartureTime()");
+  addOnEvent("Task",       "copy", "clearTaskClosedAt()");
 
 /************************ DATE/TIME PICKER POPULATION *************************/
   void setFieldToLastDateInput(String ref) {
@@ -175,10 +200,31 @@
     addOnEvent(ref, "focus", cb);
   }
 
+  List getDateTimeRefs() {
+    List refs = new ArrayList();
+
+    refs.add("Site_Admin/Recommendations/Date_of_APZ_Completion");
+    refs.add("Site_Admin/Recommendations/Date_of_APZ_Handover");
+    refs.add("Site_Admin/Recommendations/Time_of_APZ_Completion");
+    refs.add("Site_Admin/Recommendations/Time_of_APZ_Handover");
+
+    return refs;
+  }
+
   bindDatePicker("Site_Admin/Recommendations/Date_of_APZ_Completion");
   bindDatePicker("Site_Admin/Recommendations/Date_of_APZ_Handover");
   bindTimePicker("Site_Admin/Recommendations/Time_of_APZ_Completion");
   bindTimePicker("Site_Admin/Recommendations/Time_of_APZ_Handover");
+
+  // Clear the value at `ref` when the entity containing it is duplicated
+  for (String ref : getDateTimeRefs()) {
+    String tg  = getTabGroupRef(ref);
+    String evt = "copy";
+    String cb  = "setFieldValue(\"%s\", \"\")";
+    cb = replaceFirst(cb, ref);
+
+    addOnEvent(tg, evt, cb);
+  }
 ]]></logic>
 
 </module>

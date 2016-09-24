@@ -2,5 +2,5 @@
 
 cd module
 
-echo "Button_Photo_Before=Photo Before" >> english.0.properties
-echo "Button_Photo_After=Photo After"   >> english.0.properties
+echo "Button_Before_Photo=Before Photo" >> english.0.properties
+echo "Button_After_Photo=After Photo"   >> english.0.properties

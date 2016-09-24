@@ -215,7 +215,7 @@ newTab(String tab, Boolean resolveTabGroups) {
 String PREVIOUSLY_DISPLAYED_TAB_GROUP = "";
 String CURRENTLY_DISPLAYED_TAB_GROUP  = "";
 
-getTabGroups() {
+List getTabGroups() {
   List tabGroups = new ArrayList();
   tabGroups.add("Login");
   tabGroups.add("General");
@@ -225,33 +225,33 @@ getTabGroups() {
   return tabGroups;
 }
 
-updateDisplayedTabGroup(String tabGroup) {
+void updateDisplayedTabGroup(String tabGroup) {
   PREVIOUSLY_DISPLAYED_TAB_GROUP = CURRENTLY_DISPLAYED_TAB_GROUP;
   CURRENTLY_DISPLAYED_TAB_GROUP  = tabGroup;
 }
 
-getPreviousTabGroup() {
+String getPreviousTabGroup() {
   return getPreviouslyDisplayedTabGroup();
 }
 
-getPreviouslyDisplayedTabGroup() {
+String getPreviouslyDisplayedTabGroup() {
   return PREVIOUSLY_DISPLAYED_TAB_GROUP;
 }
 
-getDisplayedTabGroup() {
+String getDisplayedTabGroup() {
   return CURRENTLY_DISPLAYED_TAB_GROUP;
 }
 
-isDisplayed(String ref) {
+boolean isDisplayed(String ref) {
   return getDisplayedTabGroup().equals(ref);
 }
 
-getTabGroupRef(String fullRef) {
+String getTabGroupRef(String fullRef) {
   Boolean lastPartOnly = false;
   return getTabGroupRef(fullRef, lastPartOnly);
 }
 
-getTabGroupRef(String fullRef, Boolean lastPartOnly) {
+String getTabGroupRef(String fullRef, Boolean lastPartOnly) {
   if (isNull(fullRef)) {
     return null;
   }
@@ -262,12 +262,12 @@ getTabGroupRef(String fullRef, Boolean lastPartOnly) {
   return parts[0];
 }
 
-getTabRef(String fullRef) {
+String getTabRef(String fullRef) {
   Boolean lastPartOnly = false;
   return getTabRef(fullRef, lastPartOnly);
 }
 
-getTabRef(String fullRef, Boolean lastPartOnly) {
+String getTabRef(String fullRef, Boolean lastPartOnly) {
   if (isNull(fullRef)) {
     return null;
   }
@@ -279,7 +279,7 @@ getTabRef(String fullRef, Boolean lastPartOnly) {
   else              return parts[0] + "/" + parts[1];
 }
 
-getLastRefPart(String fullRef) {
+String getLastRefPart(String fullRef) {
   if (isNull(fullRef)) {
     return null;
   }
@@ -288,12 +288,12 @@ getLastRefPart(String fullRef) {
   return parts[parts.length-1];
 }
 
-getGuiElementRef(String fullRef) {
+String getGuiElementRef(String fullRef) {
   Boolean lastPartOnly = true;
   return getGuiElementRef(fullRef, lastPartOnly);
 }
 
-getGuiElementRef(String fullRef, Boolean lastPartOnly) {
+String getGuiElementRef(String fullRef, Boolean lastPartOnly) {
   if (isNull(fullRef)) {
     return null;
   }
@@ -305,14 +305,14 @@ getGuiElementRef(String fullRef, Boolean lastPartOnly) {
   else              return fullRef;
 }
 
-getArch16nKey(String ref) {
+String getArch16nKey(String ref) {
   String lastRefPart = getLastRefPart(ref);
 
   if (isNull(lastRefPart)) return null;
   else                     return "{" + lastRefPart + "}";
 }
 
-guessArch16nVal(String ref) {
+String guessArch16nVal(String ref) {
   String arch16nKey = getArch16nKey(ref);
 
   if (isNull(arch16nKey)) return "";
@@ -322,7 +322,7 @@ guessArch16nVal(String ref) {
   return arch16nKey;
 }
 
-getAttributeName(String ref) {
+String getAttributeName(String ref) {
   String guiElementRef = getGuiElementRef(ref);
   if (isNull(guiElementRef)) {
     return null;
@@ -332,7 +332,7 @@ getAttributeName(String ref) {
   return attributeName;
 }
 
-getArchEntType(String ref) {
+String getArchEntType(String ref) {
   String tabGroupRef = getTabGroupRef(ref);
   if (isNull(tabGroupRef)) {
     return null;
@@ -352,6 +352,8 @@ getArchEntType(String ref) {
 /* It also adds support for a several additional events:                      */
 /*   - "blur" --- This is merely an interface to make code for adding "blur"  */
 /*         events more consistent.                                            */
+/*   - "copy" --- Triggered as a record is duplicated, immediately before it  */
+/*         is first saved.                                                    */
 /*   - "create" --- Triggered after a record is first created.                */
 /*   - "fetch" --- Triggered after a record is fetched and displayed in a     */
 /*         given tab group.                                                   */
@@ -372,6 +374,7 @@ String SEP = Character.toString ((char) 0); // Beanshell won't let me write "\0"
 Map    EVENTS        = new HashMap(); // (ref, event type) -> callback statement
 Set    CUSTOM_EVENTS = new HashSet(); // Events not handled by `onEvent`
 CUSTOM_EVENTS.add("blur");
+CUSTOM_EVENTS.add("copy");
 CUSTOM_EVENTS.add("create");
 CUSTOM_EVENTS.add("fetch");
 CUSTOM_EVENTS.add("focus");
@@ -495,7 +498,8 @@ getDropdownItemValue() {
   return dropdownItemValue;
 }
 
-addOnEvent("Task/Task_Completed/Completed_Task", "click", "dropdownItemValue = getFieldValue(\"Task/Task_Completed/Completed_Task\")");
+addOnEvent("Task/Task/Task_Type", "click", "dropdownItemValue = getFieldValue(\"Task/Task/Task_Type\")");
+addOnEvent("Task/Task/State_of_Completion", "click", "dropdownItemValue = getFieldValue(\"Task/Task/State_of_Completion\")");
 
 /******************************************************************************/
 /*                             MENU VALUE GETTER                              */
@@ -721,7 +725,7 @@ updateGPSDiagnostics() {
 
 String userMenuPath = "Login/Login/User";
 
-populateListForUsers(){
+void populateListForUsers(){
   String getNonDeletedUsersQuery = "SELECT userid, fname || ' ' || lname "+
                                    "  FROM user "+
                                    " WHERE userdeleted is null;";
@@ -733,7 +737,7 @@ populateListForUsers(){
   });
 }
 
-selectUser () {
+void selectUser() {
   String userVocabId  = getListItemValue();
   String userQ        = "SELECT userid,fname,lname,email FROM user " +
                         "WHERE  userid='" + userVocabId + "';";
@@ -762,10 +766,10 @@ addOnEvent(userMenuPath, "click", "selectUser()");
 /*                              MENU POPULATION                               */
 /******************************************************************************/
 /** Fetches the contents of a specifed vocabulary and stores it in the given list. **/
-fetchVocab(String vocabName, List storageList) {
+void fetchVocab(String vocabName, List storageList) {
   fetchVocab(vocabName, storageList, null);
 }
-fetchVocab(String vocabName, List storageList, String callbackFunction) {
+void fetchVocab(String vocabName, List storageList, String callbackFunction) {
   fetchAll("select vocabid, vocabname from vocabulary left join attributekey using (attributeid) where attributename = '" + vocabName + "';", new FetchCallback() {
     onFetch(result) {
       storageList.addAll(result);
@@ -778,20 +782,20 @@ fetchVocab(String vocabName, List storageList, String callbackFunction) {
 }
 
 /** Wrapper for to make a vocab without an exlusion list **/
-makeVocab(String type, String path, String attrib) {
+void makeVocab(String type, String path, String attrib) {
   makeVocab(type, path, attrib, null);
 }
 
 /** Vocab Population **/
 /* Populates the path specified vocabulary from the database based on the given attribute name, where type 
 is the type of the vocab to populate (PictureGallery, HierarchicalPictureGallery, CheckBoxGroup, DropDown, HierarchicalDropDown, RadioGroup or List). */
-makeVocab(String type, String path, String attrib, List vocabExclusions) {
+void makeVocab(String type, String path, String attrib, List vocabExclusions) {
     makeVocab(type, path, attrib, vocabExclusions, null);
 }
 
 /* Populates the path specified vocabulary from the database based on the given attribute name, where type 
 is the type of the vocab to populate (PictureGallery, HierarchicalPictureGallery, CheckBoxGroup, DropDown, HierarchicalDropDown, RadioGroup or List). */
-makeVocab(String type, String path, String attrib, List vocabExclusions, String callbackFunction){
+void makeVocab(String type, String path, String attrib, List vocabExclusions, String callbackFunction){
   if (isNull(type) || isNull(path) || isNull(attrib)) {
     Log.e("makeVocab()", "Can't make populate a vocab when the given type, path or attribute is Null");
     return;
@@ -873,7 +877,8 @@ makeVocab(String type, String path, String attrib, List vocabExclusions, String 
     });
 }
 makeVocab("CheckBoxGroup", "Site_Admin/Recommendations/Recommendations", "Recommendations");
-makeVocab("DropDown", "Task/Task_Completed/Completed_Task", "Completed Task");
+makeVocab("DropDown", "Task/Task/Task_Type", "Task Type");
+makeVocab("DropDown", "Task/Task/State_of_Completion", "State of Completion");
 
 
 /******************************************************************************/
@@ -955,9 +960,9 @@ validateSiteAdmin() {
 validateTask() {
   List f = new ArrayList(); // Fields to be validated
 
-  f.add(fieldPair("Task/Task_Completed/Completed_Task", "{Completed_Task}"));
-  f.add(fieldPair("Task/Task_Completed/Location_Description", "{Location_Description}"));
-  f.add(fieldPair("Task/Task_Completed/Task_Completed_at", "{Task_Completed_at}"));
+  f.add(fieldPair("Task/Task/Task_Type", "{Task_Type}"));
+  f.add(fieldPair("Task/Task/Location_Description", "{Location_Description}"));
+  f.add(fieldPair("Task/Task/Task_Closed_at", "{Task_Closed_at}"));
 
   String validationMessage = validateFields(f, "PLAINTEXT");
   showWarning("Validation Results", validationMessage);
@@ -1083,11 +1088,11 @@ void populateAuthorAndTimestamp(String tabgroup) {
   if (!isNull(timestampPath)) setFieldValue(timestampPath, timestampVal);
 }
 
-onShowSiteAdmin () {
+void onShowSiteAdmin () {
   // TODO: Add some things which should happen when this tabgroup is shown
   saveTabGroup("Site_Admin", "onSaveSiteAdmin__()");
 }
-onShowTask () {
+void onShowTask () {
   // TODO: Add some things which should happen when this tabgroup is shown
   saveTabGroup("Task", "onSaveTask__()");
 }
@@ -1095,16 +1100,16 @@ onShowTask () {
 addOnEvent("Site_Admin", "show", "onShowSiteAdmin()");
 addOnEvent("Task", "show", "onShowTask()");
 
-onClickLoginUser () {
+void onClickLoginUser () {
   // TODO: Add some things which should happen when this element is clicked
   newTab("General", true);
 }
-onClickGeneralCreateNewJob () {
+void onClickGeneralCreateNewJob () {
   // TODO: Add some things which should happen when this element is clicked
   parentTabgroup__ = "General";
   newSiteAdmin();
 }
-onClickSiteAdminAddNewTask () {
+void onClickSiteAdminAddTask () {
   // TODO: Add some things which should happen when this element is clicked
   String tabgroup = "Site_Admin";
   if (isNull(getUuid(tabgroup))){
@@ -1118,14 +1123,14 @@ onClickSiteAdminAddNewTask () {
 
 addOnEvent("Login/Login/User", "click", "onClickLoginUser()");
 addOnEvent("General/General/Create_New_Job", "click", "onClickGeneralCreateNewJob()");
-addOnEvent("Site_Admin/Deliverable/Add_New_Task", "click", "onClickSiteAdminAddNewTask()");
+addOnEvent("Site_Admin/Deliverable/Add_Task", "click", "onClickSiteAdminAddTask()");
 
 
 /******************************************************************************/
 /*                   AUDIO, CAMERA, FILE AND VIDEO BINDINGS                   */
 /******************************************************************************/
-addOnEvent("Task/Task_Completed/Button_Photo_Before", "click", "attachPictureTo(\"Task/Task_Completed/Photo_Before\")");
-addOnEvent("Task/Task_Completed/Button_Photo_After", "click", "attachPictureTo(\"Task/Task_Completed/Photo_After\")");
+addOnEvent("Task/Task/Button_Before_Photo", "click", "attachPictureTo(\"Task/Task/Before_Photo\")");
+addOnEvent("Task/Task/Button_After_Photo", "click", "attachPictureTo(\"Task/Task/After_Photo\")");
 
 /******************************************************************************/
 /*                             NAVIGATION DRAWER                              */
@@ -1149,10 +1154,10 @@ addNavigationButtons(String tabgroup) {
     }
     actionOn() {
       if(isNull(getUuid(tabgroup))) {
-          newRecord(tabgroup);
+          newRecord(tabgroup, true);
           showToast("{New_record_created}");
       } else {
-          showAlert("{Warning}", "{Any_unsaved_changes_will_be_lost}", "newRecord(\""+tabgroup+"\")", "");
+          showAlert("{Warning}", "{Any_unsaved_changes_will_be_lost}", "newRecord(\""+tabgroup+"\", true)", "");
       }
     }
   }, "success");
@@ -1193,20 +1198,20 @@ addNavigationButtons(String tabgroup) {
 /*        ENTITY AND RELATIONSHIP SAVING AND LOADING HELPER FUNCTIONS         */
 /******************************************************************************/
 /** Saves two entity id's as a relation. **/
-saveEntitiesToRel(String type, String entity1, String entity2) {
+void saveEntitiesToRel(String type, String entity1, String entity2) {
   String callback = null;
   saveEntitiesToRel(type, entity1, entity2, callback);
 }
 
 /** Saves two entity id's as a relation with some callback executed. **/
-saveEntitiesToRel(String type, String entity1, String entity2, String callback) {
+void saveEntitiesToRel(String type, String entity1, String entity2, String callback) {
   String e1verb = null;
   String e2verb = null;
   saveEntitiesToHierRel(type, entity1, entity2, e1verb, e2verb, callback);
 }
 
 /** Saves two entity id's as a hierachical relation with some callback executed. **/
-saveEntitiesToHierRel(String type, String entity1, String entity2, String e1verb, String e2verb, String callback) {
+void saveEntitiesToHierRel(String type, String entity1, String entity2, String e1verb, String e2verb, String callback) {
   if (isNull(entity1) || isNull(entity2)) return;
   saveRel(null, type, null, null, new SaveCallback() {
     onSave(rel_id, newRecord) {
@@ -1224,8 +1229,34 @@ saveEntitiesToHierRel(String type, String entity1, String entity2, String e1verb
 }
 
 // Makes a new record of the given tabgroup
-newRecord(String tabgroup) {
-  cancelTabGroup(tabgroup, false);
+void newRecord(String tabgroup) {
+  boolean doUpdateRelVars = false;
+  newRecord(tabgroup, doUpdateRelVars);
+}
+
+void newRecord(String tabgroup, boolean doUpdateRelVars) {
+  if (doUpdateRelVars) {
+    String uuidOld = getUuid(getDisplayedTabGroup());
+    String q       = getDuplicateRelnQuery(uuidOld); // We're not duplicating
+                                                     // anything, just getting
+                                                     // the parent's UUID.
+
+    cancelTabGroup(tabgroup, false);
+
+    FetchCallback updateRelVars = new FetchCallback() {
+      onFetch(result) {
+        if (result != null && result.size() >= 1) {
+          parentTabgroup   = result.get(0).get(4);
+          parentTabgroup   = parentTabgroup.replaceAll(" ", "_");
+          parentTabgroup__ = parentTabgroup;
+        }
+
+        newRecord(tabgroup, false);
+      }
+    };
+    fetchAll(q, updateRelVars);
+    return;
+  }
 
   String newTabGroupFunction = "new" + tabgroup.replaceAll("_", "") + "()"; // Typical value: "newTabgroup()"
   eval(newTabGroupFunction);
@@ -1234,7 +1265,7 @@ newRecord(String tabgroup) {
 }
 
 // Deletes the current record of the given tabgroup
-deleteRecord(String tabgroup) {
+void deleteRecord(String tabgroup) {
   String deleteTabGroupFunction = "delete" + tabgroup.replaceAll("_", "") + "()"; // Typical value: "deleteTabgroup()"
   eval(deleteTabGroupFunction);
 
@@ -1242,7 +1273,7 @@ deleteRecord(String tabgroup) {
 }
 
 // Duplicates the current record of the given tabgroup
-duplicateRecord(String tabgroup) {
+void duplicateRecord(String tabgroup) {
   dialog = showBusy("Duplicating", "Please wait...");
 
   String duplicateTabGroupFunction = "duplicate" + tabgroup.replaceAll("_", "") + "()"; // Typical value: "duplicateTabgroup()"
@@ -1252,7 +1283,7 @@ duplicateRecord(String tabgroup) {
 }
 
 // generic fetch saved attributes query
-getDuplicateAttributeQuery(String originalRecordID, String attributesToDupe) {
+String getDuplicateAttributeQuery(String originalRecordID, String attributesToDupe) {
   if (attributesToDupe.equals("")) {
     attributesToDupe = "''";
   }
@@ -1263,8 +1294,8 @@ getDuplicateAttributeQuery(String originalRecordID, String attributesToDupe) {
   return duplicateQuery;
 }
 
-getDuplicateRelnQuery(String originalRecordID) {
-  String dupeRelnQuery = "SELECT relntypename, parentparticipatesverb, childparticipatesverb, parentuuid "+
+String getDuplicateRelnQuery(String originalRecordID) {
+  String dupeRelnQuery = "SELECT relntypename, parentparticipatesverb, childparticipatesverb, parentuuid, parentaenttypename, childaenttypename"+
                          "  FROM parentchild join relationship using (relationshipid) "+
                          "  JOIN relntype using (relntypeid) "+
                          " WHERE childuuid = '"+originalRecordID+"' " +
@@ -1272,21 +1303,19 @@ getDuplicateRelnQuery(String originalRecordID) {
   return dupeRelnQuery;
 }
 
-makeDuplicateRelationships(fetchedAttributes, String newuuid){
+void makeDuplicateRelationships(fetchedAttributes, String newUuid){
   Log.e("Module", "makeDuplicateRelationships");
   for (savedAttribute : fetchedAttributes){
-    //  saveEntitiesToHierRel(relnname, parent, child, parentverb, childverb, relSaveCallback);
-    //relntypename, parentparticipatesverb, childparticipatesverb, childuuid
     String relntypename           = savedAttribute.get(0);
     String parentparticipatesverb = savedAttribute.get(1);
     String childparticipatesverb  = savedAttribute.get(2);
-    String childuuid              = savedAttribute.get(3);
-    saveEntitiesToHierRel(relntypename, newuuid, childuuid, parentparticipatesverb, childparticipatesverb, null);
+    String parentUuid             = savedAttribute.get(3);
+    saveEntitiesToHierRel(relntypename, parentUuid, newUuid, parentparticipatesverb, childparticipatesverb, null);
   }
 }
 
 // generic get extra attributes
-getExtraAttributes(fetchedAttributes) {
+List getExtraAttributes(fetchedAttributes) {
   List extraAttributes = createAttributeList();
   Log.d("Module", "Duplicating fetched attributes: " + fetchedAttributes.toString());
   for (savedAttribute : fetchedAttributes) {
@@ -1303,10 +1332,10 @@ getExtraAttributes(fetchedAttributes) {
   return extraAttributes;
 }
 
-loadEntity() {
+void loadEntity() {
   loadEntity(false);
 }
-loadEntity(Boolean isDropdown) {
+void loadEntity(Boolean isDropdown) {
   if (isDropdown) {
     loadEntityFrom(getDropdownItemValue());
   } else {
@@ -1314,7 +1343,7 @@ loadEntity(Boolean isDropdown) {
   }
 }
 
-loadEntityFrom(String entityID) {
+void loadEntityFrom(String entityID) {
   if (isNull(entityID)) {
     Log.e("Module", "Cannot load an entity with a null ID.");
     return;
@@ -1334,7 +1363,7 @@ loadEntityFrom(String entityID) {
   });
 }
 
-newSiteAdmin(){
+void newSiteAdmin(){
   String tabgroup = "Site_Admin";
 
 
@@ -1348,7 +1377,7 @@ newSiteAdmin(){
 }
 
 
-onCreateSiteAdmin__(){
+void onCreateSiteAdmin__(){
   String ref      = "Site_Admin";
   String event    = "create";
   String stmtsStr = getStatementsString(ref, event);
@@ -1358,7 +1387,7 @@ onCreateSiteAdmin__(){
 
 
 // Triggered after an existing record is loaded.
-onFetchSiteAdmin__(){
+void onFetchSiteAdmin__(){
   String ref      = "Site_Admin";
   String event    = "fetch";
   String stmtsStr = getStatementsString(ref, event);
@@ -1368,23 +1397,33 @@ onFetchSiteAdmin__(){
 
 
 // Triggered after an existing record is saved.
-onSaveSiteAdmin__(){
+void onSaveSiteAdmin__(){
   String ref      = "Site_Admin";
   String event    = "save";
   String stmtsStr = getStatementsString(ref, event);
   execute(stmtsStr);
 }
 
-duplicateSiteAdmin(){
+
+
+// Triggered as a record is duplicated but before it's saved.
+void onCopySiteAdmin__(){
+  String ref      = "Site_Admin";
+  String event    = "copy";
+  String stmtsStr = getStatementsString(ref, event);
+  execute(stmtsStr);
+}
+
+void duplicateSiteAdmin(){
   String tabgroup = "Site_Admin";
   String uuidOld = getUuid(tabgroup);
 
   disableAutoSave(tabgroup);
 
-
   clearGpsInTabGroup(tabgroup);
 
 
+  onCopySiteAdmin__();
 
   saveCallback = new SaveCallback() {
     onSave(uuid, newRecord) {
@@ -1396,17 +1435,20 @@ duplicateSiteAdmin(){
       fetchAll(getDuplicateRelnQuery(uuidOld), new FetchCallback(){
         onFetch(result) {
           Log.e("Module", result.toString());
+
+          if (result != null && result.size() >= 1) {
+            parentTabgroup__ = result.get(0).get(4);
+            parentTabgroup__ = parentTabgroup__.replaceAll(" ", "_");
+          }
+
           makeDuplicateRelationships(result, getUuid(tabgroup));
+
           showToast("{Duplicated_record}");
           dialog.dismiss();
         }
       });
 
-      saveTabGroup(tabgroup, getUuid(tabgroup), null, null, new SaveCallback(){
-        onSave(autosaveUuid, autosaveNewRecord) {
-          setUuid(tabgroup, autosaveUuid);
-        }
-      }, enable_autosave);
+      saveTabGroup(tabgroup);
     }
   };
 
@@ -1420,7 +1462,7 @@ duplicateSiteAdmin(){
   });
 }
 
-deleteSiteAdmin(){
+void deleteSiteAdmin(){
   String tabgroup = "Site_Admin";
 
   if (isNull(getUuid(tabgroup))) {
@@ -1430,13 +1472,13 @@ deleteSiteAdmin(){
   }
 }
 
-reallyDeleteSiteAdmin(){
+void reallyDeleteSiteAdmin(){
   String tabgroup = "Site_Admin";
   deleteArchEnt(getUuid(tabgroup));
   cancelTabGroup(tabgroup, false);
 }
 
-newTask(){
+void newTask(){
   String tabgroup = "Task";
 
 
@@ -1450,7 +1492,7 @@ newTask(){
 }
 
 
-onCreateTask__(){
+void onCreateTask__(){
   String ref      = "Task";
   String event    = "create";
   String stmtsStr = getStatementsString(ref, event);
@@ -1460,7 +1502,7 @@ onCreateTask__(){
 
 
 // Triggered after an existing record is loaded.
-onFetchTask__(){
+void onFetchTask__(){
   String ref      = "Task";
   String event    = "fetch";
   String stmtsStr = getStatementsString(ref, event);
@@ -1470,25 +1512,35 @@ onFetchTask__(){
 
 
 // Triggered after an existing record is saved.
-onSaveTask__(){
+void onSaveTask__(){
   String ref      = "Task";
   String event    = "save";
   String stmtsStr = getStatementsString(ref, event);
   execute(stmtsStr);
 }
 
-duplicateTask(){
+
+
+// Triggered as a record is duplicated but before it's saved.
+void onCopyTask__(){
+  String ref      = "Task";
+  String event    = "copy";
+  String stmtsStr = getStatementsString(ref, event);
+  execute(stmtsStr);
+}
+
+void duplicateTask(){
   String tabgroup = "Task";
   String uuidOld = getUuid(tabgroup);
 
   disableAutoSave(tabgroup);
 
-
   clearGpsInTabGroup(tabgroup);
 
-  populateCameraPictureGallery("Task/Task_Completed/Photo_Before", new ArrayList());
-  populateCameraPictureGallery("Task/Task_Completed/Photo_After", new ArrayList());
+  populateCameraPictureGallery("Task/Task/Before_Photo", new ArrayList());
+  populateCameraPictureGallery("Task/Task/After_Photo", new ArrayList());
 
+  onCopyTask__();
 
   saveCallback = new SaveCallback() {
     onSave(uuid, newRecord) {
@@ -1500,17 +1552,20 @@ duplicateTask(){
       fetchAll(getDuplicateRelnQuery(uuidOld), new FetchCallback(){
         onFetch(result) {
           Log.e("Module", result.toString());
+
+          if (result != null && result.size() >= 1) {
+            parentTabgroup__ = result.get(0).get(4);
+            parentTabgroup__ = parentTabgroup__.replaceAll(" ", "_");
+          }
+
           makeDuplicateRelationships(result, getUuid(tabgroup));
+
           showToast("{Duplicated_record}");
           dialog.dismiss();
         }
       });
 
-      saveTabGroup(tabgroup, getUuid(tabgroup), null, null, new SaveCallback(){
-        onSave(autosaveUuid, autosaveNewRecord) {
-          setUuid(tabgroup, autosaveUuid);
-        }
-      }, enable_autosave);
+      saveTabGroup(tabgroup);
     }
   };
 
@@ -1518,15 +1573,15 @@ duplicateTask(){
   fetchAll(getDuplicateAttributeQuery(getUuid(tabgroup), extraDupeAttributes), new FetchCallback(){
     onFetch(result) {
       excludeAttributes = new ArrayList();
-      excludeAttributes.add("Photo Before");
-      excludeAttributes.add("Photo After");
+      excludeAttributes.add("Before Photo");
+      excludeAttributes.add("After Photo");
 
       duplicateTabGroup(tabgroup, null, getExtraAttributes(result), excludeAttributes, saveCallback);
     }
   });
 }
 
-deleteTask(){
+void deleteTask(){
   String tabgroup = "Task";
 
   if (isNull(getUuid(tabgroup))) {
@@ -1536,14 +1591,14 @@ deleteTask(){
   }
 }
 
-reallyDeleteTask(){
+void reallyDeleteTask(){
   String tabgroup = "Task";
   deleteArchEnt(getUuid(tabgroup));
   cancelTabGroup(tabgroup, false);
 }
 
 
-doNotDelete(){
+void doNotDelete(){
   showToast("{Delete_Cancelled}");
 }
 addOnEvent("Login", "show", "removeNavigationButtons()");
@@ -1566,11 +1621,11 @@ entityTypes.add(new NameValuePair("{Site_Admin}", "Site Admin"));
 entityTypes.add(new NameValuePair("{Task}", "Task"));
 populateDropDown("General/Search/Entity_Types", entityTypes);
 
-clearSearch(){
+void clearSearch(){
   setFieldValue("General/Search/Search_Term","");
 }
 
-search(){
+void search(){
   String tabgroup = "General";
   String refEntityList  = tabgroup + "/Search/Entity_List";
   String refSearchTerm  = tabgroup + "/Search/Search_Term";
@@ -1595,7 +1650,7 @@ search(){
   Log.d("Module", "Search query: " + searchQuery);
 }
 
-loadSiteAdminFrom(String uuid) {
+void loadSiteAdminFrom(String uuid) {
   String tabgroup = "Site_Admin";
   setUuid(tabgroup, uuid);
   if (isNull(uuid)) return;
@@ -1611,7 +1666,7 @@ loadSiteAdminFrom(String uuid) {
   showTabGroup(tabgroup, uuid, cb);
 }
 
-loadTaskFrom(String uuid) {
+void loadTaskFrom(String uuid) {
   String tabgroup = "Task";
   setUuid(tabgroup, uuid);
   if (isNull(uuid)) return;
@@ -1631,12 +1686,12 @@ loadTaskFrom(String uuid) {
 /******************************************************************************/
 /*                          TAKE FROM GPS BUTTON(S)                           */
 /******************************************************************************/
-addOnEvent("Task/Task_Completed/Take_From_GPS", "click", "takePoint(\"Task\")");
+addOnEvent("Task/Task/Take_From_GPS", "click", "takePoint(\"Task\")");
 
 /* Takes the current point using gps. */
 takePoint(String tabgroup) {
   Map tabgroupToTabRef = new HashMap();
-  tabgroupToTabRef.put("Task", "Task/Task_Completed/");
+  tabgroupToTabRef.put("Task", "Task/Task/");
 
   String archEntType = tabgroup.replaceAll("_", " ");
   String currentUuid = getUuid(tabgroup);
@@ -1675,7 +1730,7 @@ takePoint(String tabgroup) {
 /* Sets the value of GPS views for the given tab path. */
 fillInGPS(String tabgroup) {
   Map tabgroupToTabRef = new HashMap();
-  tabgroupToTabRef.put("Task", "Task/Task_Completed/");
+  tabgroupToTabRef.put("Task", "Task/Task/");
 
   String currentUuid = getUuid(tabgroup);
   if (isNull(currentUuid)) {
@@ -1702,7 +1757,7 @@ fillInGPS(String tabgroup) {
 
 clearGpsInTabGroup(String tabgroup) {
   Map tabgroupToTabRef = new HashMap();
-  tabgroupToTabRef.put("Task", "Task/Task_Completed/");
+  tabgroupToTabRef.put("Task", "Task/Task/");
 
 
   String tabRef = tabgroupToTabRef.get(tabgroup);
@@ -1731,7 +1786,7 @@ clearGpsInTab(String tabRef) {
  * `relType`    the name of the relationship the children are to be in with the
  *              entity denoted by `parentUuid`.
  */
-populateMenuWithEntities (
+void populateMenuWithEntities (
   String viewType,
   String path,
   String parentUuid,
@@ -1784,7 +1839,7 @@ populateMenuWithEntities (
   }
 }
 
-populateEntityListsInTabGroup(String tabGroup) {
+void populateEntityListsInTabGroup(String tabGroup) {
   if (isNull(tabGroup)) {
     return;
   }
@@ -1799,7 +1854,7 @@ populateEntityListsInTabGroup(String tabGroup) {
   }
 }
 
-getEntityMenuPopulationFunction(String[] menuDescriptor) {
+String getEntityMenuPopulationFunction(String[] menuDescriptor) {
   String viewType       = menuDescriptor[0];
   String path           = menuDescriptor[1];
   String parentUuidCall = menuDescriptor[2];
@@ -1832,7 +1887,7 @@ ENTITY_MENUS.add(new String[] {
 });
 ENTITY_MENUS.add(new String[] {
   "List",
-  "Site_Admin/Deliverable/List_of_Completed_Tasks",
+  "Site_Admin/Deliverable/List_of_Tasks",
   "getUuid(\"Site_Admin\")",
   "Task",
   "Site Admin - Task",
@@ -1844,31 +1899,49 @@ for (m : ENTITY_MENUS) {
   execute(functionCall);
 }
 addOnEvent("General/General/List_of_Existing_Jobs", "click", "loadEntity()");
-addOnEvent("Site_Admin/Deliverable/List_of_Completed_Tasks", "click", "loadEntity()");
+addOnEvent("Site_Admin/Deliverable/List_of_Tasks", "click", "loadEntity()");
 
 /******************************************************************************/
 /*                             HANDWRITTEN LOGIC                              */
 /******************************************************************************/
 
 /**************************** TIMESTAMP POPULATION ****************************/
-  void recordArrivalTime() {
+  void recordArrivalTime(String val) {
     String ref = "Site_Admin/Admin_Info/Arrival_first_day";
-    setToTimestampNow(ref);
+
+    if (val == null) setToTimestampNow(ref);
+    else             setFieldValue    (ref, val);
   }
 
-  void recordDepartureTime() {
+  void recordDepartureTime(String val) {
     String ref = "Site_Admin/Recommendations/Departure_last_day";
-    setToTimestampNow(ref);
+
+    if (val == null) setToTimestampNow(ref);
+    else             setFieldValue    (ref, val);
   }
 
-  void recordTaskCompletedat() {
-    String ref = "Task/Task_Completed/Task_Completed_at";
-    setToTimestampNow(ref);
+  void recordTaskClosedAt(String val) {
+    String ref = "Task/Task/Task_Closed_at";
+
+    if (val == null) setToTimestampNow(ref);
+    else             setFieldValue    (ref, val);
   }
+
+  void recordArrivalTime()   { recordArrivalTime  (null); }
+  void recordDepartureTime() { recordDepartureTime(null); }
+  void recordTaskClosedAt()  { recordTaskClosedAt (null); }
+
+  void clearArrivalTime()    { recordArrivalTime  (""); }
+  void clearDepartureTime()  { recordDepartureTime(""); }
+  void clearTaskClosedAt()   { recordTaskClosedAt (""); }
 
   addOnEvent("Site_Admin/Admin_Info/Record_Arrival_Time",        "click", "recordArrivalTime()");
   addOnEvent("Site_Admin/Recommendations/Record_Departure_Time", "click", "recordDepartureTime()");
-  addOnEvent("Task/Task_Completed/Task_Completed",               "click", "recordTaskCompletedat()");
+  addOnEvent("Task/Task/Task_Closed",                            "click", "recordTaskClosedAt()");
+
+  addOnEvent("Site_Admin", "copy", "clearArrivalTime()");
+  addOnEvent("Site_Admin", "copy", "clearDepartureTime()");
+  addOnEvent("Task",       "copy", "clearTaskClosedAt()");
 
 /************************ DATE/TIME PICKER POPULATION *************************/
   void setFieldToLastDateInput(String ref) {
@@ -1907,10 +1980,31 @@ addOnEvent("Site_Admin/Deliverable/List_of_Completed_Tasks", "click", "loadEntit
     addOnEvent(ref, "focus", cb);
   }
 
+  List getDateTimeRefs() {
+    List refs = new ArrayList();
+
+    refs.add("Site_Admin/Recommendations/Date_of_APZ_Completion");
+    refs.add("Site_Admin/Recommendations/Date_of_APZ_Handover");
+    refs.add("Site_Admin/Recommendations/Time_of_APZ_Completion");
+    refs.add("Site_Admin/Recommendations/Time_of_APZ_Handover");
+
+    return refs;
+  }
+
   bindDatePicker("Site_Admin/Recommendations/Date_of_APZ_Completion");
   bindDatePicker("Site_Admin/Recommendations/Date_of_APZ_Handover");
   bindTimePicker("Site_Admin/Recommendations/Time_of_APZ_Completion");
   bindTimePicker("Site_Admin/Recommendations/Time_of_APZ_Handover");
+
+  // Clear the value at `ref` when the entity containing it is duplicated
+  for (String ref : getDateTimeRefs()) {
+    String tg  = getTabGroupRef(ref);
+    String evt = "copy";
+    String cb  = "setFieldValue(\"%s\", \"\")";
+    cb = replaceFirst(cb, ref);
+
+    addOnEvent(tg, evt, cb);
+  }
 
 /******************************************************************************/
 /*                                    INIT                                    */

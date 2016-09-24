@@ -51,8 +51,8 @@
               <Personnel/>
             </Admin_Info>
             <Deliverable>
-              <Add_New_Task/>
-              <List_of_Completed_Tasks/>
+              <Add_Task/>
+              <List_of_Tasks/>
             </Deliverable>
             <Recommendations>
               <Recommendations/>
@@ -68,9 +68,9 @@
             </Recommendations>
           </Site_Admin>
           <Task>
-            <Task_Completed>
-              <Photo_Before/>
-              <Button_Photo_Before/>
+            <Task>
+              <Task_Type/>
+              <Location_Description/>
               <Colgroup_GPS_0>
                 <Col_0>
                   <Latitude/>
@@ -91,14 +91,15 @@
                 </Col_2>
               </Colgroup_GPS_1>
               <Take_From_GPS/>
-              <Completed_Task/>
-              <Location_Description/>
+              <Before_Photo/>
+              <Button_Before_Photo/>
+              <State_of_Completion/>
+              <After_Photo/>
+              <Button_After_Photo/>
+              <Task_Closed/>
+              <Task_Closed_at/>
               <Notes_Comments/>
-              <Photo_After/>
-              <Button_Photo_After/>
-              <Task_Completed/>
-              <Task_Completed_at/>
-            </Task_Completed>
+            </Task>
           </Task>
           <logic/>
         </faims>
@@ -219,11 +220,11 @@
       </group>
       <group ref="Deliverable" faims_scrollable="false">
         <label>{Deliverable}</label>
-        <trigger ref="Add_New_Task">
-          <label>{Add_New_Task}</label>
+        <trigger ref="Add_Task">
+          <label>{Add_Task}</label>
         </trigger>
-        <select1 appearance="compact" ref="List_of_Completed_Tasks" faims_annotation="false" faims_certainty="false">
-          <label>{List_of_Completed_Tasks}</label>
+        <select1 appearance="compact" ref="List_of_Tasks" faims_annotation="false" faims_certainty="false">
+          <label>{List_of_Tasks}</label>
           <item>
             <label>Options not loaded</label>
             <value>0</value>
@@ -270,18 +271,18 @@
     </group>
     <group ref="Task" faims_archent_type="Task">
       <label>{Task}</label>
-      <group ref="Task_Completed">
-        <label>{Task_Completed}</label>
-        <select type="camera" faims_attribute_type="measure" faims_sync="true" ref="Photo_Before" faims_attribute_name="Photo Before">
-          <label>{Photo_Before}</label>
+      <group ref="Task">
+        <label>{Task}</label>
+        <select1 faims_attribute_type="vocab" ref="Task_Type" faims_attribute_name="Task Type" faims_style_class="required">
+          <label>{Task_Type}</label>
           <item>
             <label>Options not loaded</label>
             <value>0</value>
           </item>
-        </select>
-        <trigger ref="Button_Photo_Before">
-          <label>{Button_Photo_Before}</label>
-        </trigger>
+        </select1>
+        <input faims_attribute_type="measure" ref="Location_Description" faims_attribute_name="Location Description" faims_style_class="required">
+          <label>{Location_Description}</label>
+        </input>
         <group ref="Colgroup_GPS_0" faims_style="orientation">
           <label/>
           <group ref="Col_0" faims_style="even">
@@ -321,34 +322,41 @@
         <trigger ref="Take_From_GPS">
           <label>{Take_From_GPS}</label>
         </trigger>
-        <select1 faims_attribute_type="vocab" ref="Completed_Task" faims_attribute_name="Completed Task" faims_style_class="required">
-          <label>{Completed_Task}</label>
-          <item>
-            <label>Options not loaded</label>
-            <value>0</value>
-          </item>
-        </select1>
-        <input faims_attribute_type="measure" ref="Location_Description" faims_attribute_name="Location Description" faims_style_class="required">
-          <label>{Location_Description}</label>
-        </input>
-        <input faims_attribute_type="measure" ref="Notes_Comments" faims_attribute_name="Notes Comments">
-          <label>{Notes_Comments}</label>
-        </input>
-        <select type="camera" faims_attribute_type="measure" faims_sync="true" ref="Photo_After" faims_attribute_name="Photo After">
-          <label>{Photo_After}</label>
+        <select type="camera" faims_attribute_type="measure" faims_sync="true" ref="Before_Photo" faims_attribute_name="Before Photo">
+          <label>{Before_Photo}</label>
           <item>
             <label>Options not loaded</label>
             <value>0</value>
           </item>
         </select>
-        <trigger ref="Button_Photo_After">
-          <label>{Button_Photo_After}</label>
+        <trigger ref="Button_Before_Photo">
+          <label>{Button_Before_Photo}</label>
         </trigger>
-        <trigger ref="Task_Completed">
-          <label>{Task_Completed}</label>
+        <select1 faims_attribute_type="vocab" ref="State_of_Completion" faims_attribute_name="State of Completion">
+          <label>{State_of_Completion}</label>
+          <item>
+            <label>Options not loaded</label>
+            <value>0</value>
+          </item>
+        </select1>
+        <select type="camera" faims_attribute_type="measure" faims_sync="true" ref="After_Photo" faims_attribute_name="After Photo">
+          <label>{After_Photo}</label>
+          <item>
+            <label>Options not loaded</label>
+            <value>0</value>
+          </item>
+        </select>
+        <trigger ref="Button_After_Photo">
+          <label>{Button_After_Photo}</label>
         </trigger>
-        <input faims_attribute_type="measure" ref="Task_Completed_at" faims_attribute_name="Task Completed at" faims_read_only="true" faims_style_class="required">
-          <label>{Task_Completed_at}</label>
+        <trigger ref="Task_Closed">
+          <label>{Task_Closed}</label>
+        </trigger>
+        <input faims_attribute_type="measure" ref="Task_Closed_at" faims_attribute_name="Task Closed at" faims_read_only="true" faims_style_class="required">
+          <label>{Task_Closed_at}</label>
+        </input>
+        <input faims_attribute_type="measure" ref="Notes_Comments" faims_attribute_name="Notes Comments">
+          <label>{Notes_Comments}</label>
         </input>
       </group>
     </group>

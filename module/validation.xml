@@ -13,7 +13,7 @@
     </property>
   </ArchaeologicalElement>
   <ArchaeologicalElement name="Task">
-    <property name="Completed Task">
+    <property name="Task Type">
       <validator type="blankchecker">
         <param value="vocab" type="field"/>
       </validator>
@@ -23,7 +23,7 @@
         <param value="measure" type="field"/>
       </validator>
     </property>
-    <property name="Task Completed at">
+    <property name="Task Closed at">
       <validator type="blankchecker">
         <param value="measure" type="field"/>
       </validator>
