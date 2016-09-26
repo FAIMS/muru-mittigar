@@ -53,7 +53,6 @@ else:
 moduleName = moduleLocation.split(os.sep)
 if moduleName[-1] == 'module': moduleName = moduleName[-2]
 else:                          moduleName = moduleName[-1]
-moduleName = 'muru-mittigar-dev'
 
 # Check that all the given paths really exist
 if not os.path.exists(moduleLocation):
@@ -125,7 +124,7 @@ def deleteModule(br):
     print 'Downloading delete form...'
     # Try clicking on link to module config page
     try:
-        linkText = moduleName
+        linkText = '^%s$' % moduleName
         res      = br.follow_link(text_regex=linkText)
     except:
         print 'Cannot delete module; does not exist. Exiting.'
@@ -159,7 +158,7 @@ def uploadModule(br):
     print 'Downloading update/create form...'
     try:
         # The module's already been uploaded
-        linkText = moduleName
+        linkText = '^%s$' % moduleName
         res      = br.follow_link(text_regex=linkText)
 
         linkText = 'Edit Module'

@@ -81,7 +81,7 @@
     <Task_Type f="id notnull">
       <str>
         <fmt>$1: </fmt>
-        <pos>1</pos>
+        <pos>2</pos>
       </str>
       <opts>
         <opt>Deadwooding of limbs</opt>
@@ -98,7 +98,7 @@
     <Location_Description f="id notnull">
       <str>
         <fmt>$2: </fmt>
-        <pos>2</pos>
+        <pos>3</pos>
       </str>
     </Location_Description>
     <gps/>
@@ -114,14 +114,23 @@
     <Task_Closed t="button"/>
     <Task_Closed_at f="id notnull readonly">
       <str>
-        <fmt>$2: </fmt>
-        <pos>3</pos>
+        <fmt>$2</fmt>
+        <pos>4</pos>
       </str>
     </Task_Closed_at>
     <Notes_Comments>
       Notes/Comments
     </Notes_Comments>
   </Task>
+  <Vars f="hidden">
+    <Task_DoE_Site_School f="id">
+      <!--Inherited-->
+      <str>
+        <pos>1</pos>
+        <fmt>$2 </fmt>
+      </str>
+    </Task_DoE_Site_School>
+  </Vars>
 </Task>
 
 <logic><![CDATA[
@@ -225,6 +234,16 @@
 
     addOnEvent(tg, evt, cb);
   }
+
+/******************************** INHERITANCE *********************************/
+  void copyTaskDoeSiteSchool () {
+    String src = "Site_Admin/Admin_Info/DoE_Site_School";
+    String dst = "Task/Vars/Task_DoE_Site_School";
+
+    copyFieldValue(src, dst, false);
+  }
+
+  addOnEvent("Task", "create", "copyTaskDoeSiteSchool()");
 ]]></logic>
 
 </module>

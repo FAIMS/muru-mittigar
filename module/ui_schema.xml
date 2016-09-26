@@ -100,6 +100,9 @@
               <Task_Closed_at/>
               <Notes_Comments/>
             </Task>
+            <Vars>
+              <Task_DoE_Site_School/>
+            </Vars>
           </Task>
           <logic/>
         </faims>
@@ -357,6 +360,12 @@
         </input>
         <input faims_attribute_type="measure" ref="Notes_Comments" faims_attribute_name="Notes Comments">
           <label>{Notes_Comments}</label>
+        </input>
+      </group>
+      <group ref="Vars" faims_hidden="true">
+        <label>{Vars}</label>
+        <input faims_attribute_type="measure" ref="Task_DoE_Site_School" faims_attribute_name="Task DoE Site School">
+          <label>{Task_DoE_Site_School}</label>
         </input>
       </group>
     </group>

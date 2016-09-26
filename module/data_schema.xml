@@ -102,6 +102,11 @@
   </ArchaeologicalElement>
   <ArchaeologicalElement name="Task">
     <description/>
+    <property name="Task DoE Site School" isIdentifier="true" type="measure">
+      <description/>
+      <formatString><![CDATA[$2 ]]></formatString>
+      <appendCharacterString><![CDATA[ - ]]></appendCharacterString>
+    </property>
     <property name="Task Type" isIdentifier="true" type="vocab">
       <description/>
       <formatString><![CDATA[$1: ]]></formatString>
@@ -134,7 +139,7 @@
     </property>
     <property name="Task Closed at" isIdentifier="true" type="measure">
       <description/>
-      <formatString><![CDATA[$2: ]]></formatString>
+      <formatString><![CDATA[$2]]></formatString>
       <appendCharacterString><![CDATA[ - ]]></appendCharacterString>
     </property>
     <property name="Before Photo" type="file" file="true" thumbnail="true">
