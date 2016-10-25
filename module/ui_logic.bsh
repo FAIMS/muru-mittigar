@@ -121,7 +121,7 @@ void persistOverSessions(String ref) {
   insertIntoLocalSettingsOnChange     (ref);
 }
 
-/**************************** FIELD COPYING HELPER ****************************/
+/*************************** FIELD COPYING HELPERS ****************************/
 /* Provides an easy way to copy field values, even between vocabs.            */
 /******************************************************************************/
 void copyFieldValue(String src, String dst) {
@@ -177,6 +177,36 @@ void copyFieldValue(String src, String dst, Boolean doFindVocabId) {
   };
 
   fetchOne(q, populate);
+}
+
+void inheritFieldValue(
+    String src,
+    String dst,
+    boolean doCheckParent,
+    boolean doFindVocabId
+) {
+  String fun = "";
+  fun += "if (!{check} || getDisplayedTabGroup().equals(\"{parent}\"))";
+  fun += "  copyFieldValue(\"{src}\", \"{dst}\", {find})";
+
+  fun = replaceFirst(fun, "{check}",  doCheckParent + "");
+  fun = replaceFirst(fun, "{parent}", getTabGroupRef(src));
+  fun = replaceFirst(fun, "{src}",    src);
+  fun = replaceFirst(fun, "{dst}",    dst);
+  fun = replaceFirst(fun, "{find}",   doFindVocabId + "");
+
+  addOnEvent(getTabGroupRef(dst), "create", fun);
+}
+
+/* If `doCheckParent`, then the value at `src` will only be inherited to `dst`
+ * if `getTabGroupRef(src)` was the previously displayed tab group.
+ */
+void inheritFieldValue(String src, String dst, boolean doCheckParent) {
+  inheritFieldValue(src, dst, doCheckParent, false);
+}
+
+void inheritFieldValue(String src, String dst) {
+  inheritFieldValue(src, dst, true);
 }
 
 newTab(String tab, Boolean resolveTabGroups) {
@@ -503,14 +533,14 @@ for (tg : getTabGroups()) {
 /*                                                                            */
 /* For consistency with `getListItemValue()`.                                 */
 /******************************************************************************/
-String dropdownItemValue = null;
+String DROPDOWN_ITEM_VALUE = null;
 
-getDropdownItemValue() {
-  return dropdownItemValue;
+String getDropdownItemValue() {
+  return DROPDOWN_ITEM_VALUE;
 }
 
-addOnEvent("Task/Task/Task_Type", "click", "dropdownItemValue = getFieldValue(\"Task/Task/Task_Type\")");
-addOnEvent("Task/Task/State_of_Completion", "click", "dropdownItemValue = getFieldValue(\"Task/Task/State_of_Completion\")");
+addOnEvent("Task/Task/Task_Type", "click", "DROPDOWN_ITEM_VALUE = getFieldValue(\"Task/Task/Task_Type\")");
+addOnEvent("Task/Task/State_of_Completion", "click", "DROPDOWN_ITEM_VALUE = getFieldValue(\"Task/Task/State_of_Completion\")");
 
 /******************************************************************************/
 /*                             MENU VALUE GETTER                              */
@@ -525,7 +555,7 @@ Map MENU_VALUES = null;
  * Initialises `MENU_VALUES` with the (vocabid -> vocabname) mapping of every
  * menu.
  */
-fetchMenuValues() {
+void fetchMenuValues() {
   MENU_VALUES = new HashMap();
 
   String q = "";
@@ -549,7 +579,7 @@ fetchMenuValues();
 
 /* Returns a menu's vocabname, instead of the (counter-intuitive) vocabid.
  */
-getFieldValue(String ref, Boolean doConvertVocabIds) {
+String getFieldValue(String ref, Boolean doConvertVocabIds) {
   if (!doConvertVocabIds) {
     return getFieldValue(ref);
   }
@@ -565,7 +595,7 @@ getFieldValue(String ref, Boolean doConvertVocabIds) {
 /* Shorthand for writing getFieldValue(ref, true). This function's use is
  * discouraged in favour of writing `getFieldValue(ref, true)`.
  */
-getMenuValue(String ref) {
+String getMenuValue(String ref) {
   return getFieldValue(ref, true);
 }
 
@@ -667,7 +697,7 @@ addActionBarItem("external_gps", new ToggleActionButtonCallback() {
 /*                                    GPS                                     */
 /******************************************************************************/
 
-updateGPSDiagnostics() {
+void updateGPSDiagnostics() {
   String diagnosticsRef = "";
   if (diagnosticsRef.equals("")) {
     return;
@@ -903,7 +933,7 @@ makeVocab("DropDown", "Task/Task/State_of_Completion", "State of Completion");
  *
  *  Returns a field pair (really just an ArrayList).
  */
-fieldPair(String ref, String name, String cond) {
+List fieldPair(String ref, String name, String cond) {
   List fp = new ArrayList();
   fp.add(ref);
   fp.add(name);
@@ -911,19 +941,19 @@ fieldPair(String ref, String name, String cond) {
   return fp;
 }
 
-fieldPair(String ref, String name) {
+List fieldPair(String ref, String name) {
   String t = "true";
   return fieldPair(ref, name, t);
 }
 
 /* Returns true if field specified by `ref` is valid. False otherwise.
  */
-isValidField(String ref) {
+boolean isValidField(String ref) {
   return !isNull(getFieldValue(ref));
 }
 /* `format` can either be HTML or PLAINTEXT
  */
-validateFields(List fields, String format) {
+String validateFields(List fields, String format) {
   Integer numInvalid = 0;
 
   /* Build validation message string (and count how many invalid fields exist) */
@@ -958,7 +988,7 @@ validateFields(List fields, String format) {
   return out;
 }
 
-validateSiteAdmin() {
+void validateSiteAdmin() {
   List f = new ArrayList(); // Fields to be validated
 
   f.add(fieldPair("Site_Admin/Admin_Info/DoE_Site_School", "{DoE_Site__School_}"));
@@ -968,7 +998,7 @@ validateSiteAdmin() {
   showWarning("Validation Results", validationMessage);
 }
 
-validateTask() {
+void validateTask() {
   List f = new ArrayList(); // Fields to be validated
 
   f.add(fieldPair("Task/Task/Task_Type", "{Task_Type}"));
@@ -1142,14 +1172,14 @@ addOnEvent("Task/Task/Button_After_Photo", "click", "attachPictureTo(\"Task/Task
 /******************************************************************************/
 /*                             NAVIGATION DRAWER                              */
 /******************************************************************************/
-removeNavigationButtons() {
+void removeNavigationButtons() {
   removeNavigationButton("new");
   removeNavigationButton("duplicate");
   removeNavigationButton("delete");
   removeNavigationButton("validate");
 }
 
-addNavigationButtons(String tabgroup) {
+void addNavigationButtons(String tabgroup) {
   removeNavigationButtons();
   List tabgroupsToValidate = new ArrayList();
   tabgroupsToValidate.add("Site_Admin");
@@ -1161,10 +1191,10 @@ addNavigationButtons(String tabgroup) {
     }
     actionOn() {
       if(isNull(getUuid(tabgroup))) {
-          newRecord(tabgroup, true);
-          showToast("{New_record_created}");
+        showAlert("{Warning}", "{The_current_record_has_not_been_saved_yet}", "newRecord(\""+tabgroup+"\", true)", "");
       } else {
-          showAlert("{Warning}", "{Any_unsaved_changes_will_be_lost}", "newRecord(\""+tabgroup+"\", true)", "");
+        newRecord(tabgroup, true);
+        showToast("{New_record_created}");
       }
     }
   }, "success");
@@ -1174,9 +1204,9 @@ addNavigationButtons(String tabgroup) {
     }
     actionOn() {
       if(!isNull(getUuid(tabgroup))) {
-          duplicateRecord(tabgroup);
+        duplicateRecord(tabgroup);
       } else {
-          showWarning("{Warning}", "{This_record_is_unsaved_and_cannot_be_duplicated}");
+        showWarning("{Warning}", "{This_record_is_unsaved_and_cannot_be_duplicated}");
       }
     }
   }, "primary");
@@ -1319,7 +1349,7 @@ void makeDuplicateRelationships(fetchedAttributes, String newUuid){
     String parentUuid             = savedAttribute.get(3);
     String childArchEntType       = savedAttribute.get(5);
 
-    String onSaveRel              = "onSave" + childArchEntType + "__()";
+    String onSaveRel              = "onSave" + childArchEntType.replaceAll(" ", "") + "__()";
 
     saveEntitiesToHierRel(
         relntypename,
@@ -1441,11 +1471,13 @@ void onDeleteSiteAdmin__(){
 void duplicateSiteAdmin(){
   String tabgroup = "Site_Admin";
   String uuidOld = getUuid(tabgroup);
+  setUuid(tabgroup, "");
 
   disableAutoSave(tabgroup);
 
   clearGpsInTabGroup(tabgroup);
   populateAuthorAndTimestamp(tabgroup);
+  populateEntityListsInTabGroup(tabgroup);
 
   onCopySiteAdmin__();
 
@@ -1474,7 +1506,7 @@ void duplicateSiteAdmin(){
   };
 
   String extraDupeAttributes = "";
-  fetchAll(getDuplicateAttributeQuery(getUuid(tabgroup), extraDupeAttributes), new FetchCallback(){
+  fetchAll(getDuplicateAttributeQuery(uuidOld, extraDupeAttributes), new FetchCallback(){
     onFetch(result) {
       excludeAttributes = new ArrayList();
 
@@ -1561,11 +1593,13 @@ void onDeleteTask__(){
 void duplicateTask(){
   String tabgroup = "Task";
   String uuidOld = getUuid(tabgroup);
+  setUuid(tabgroup, "");
 
   disableAutoSave(tabgroup);
 
   clearGpsInTabGroup(tabgroup);
   populateAuthorAndTimestamp(tabgroup);
+  populateEntityListsInTabGroup(tabgroup);
   populateCameraPictureGallery("Task/Task/Before_Photo", new ArrayList());
   populateCameraPictureGallery("Task/Task/After_Photo", new ArrayList());
 
@@ -1596,7 +1630,7 @@ void duplicateTask(){
   };
 
   String extraDupeAttributes = "";
-  fetchAll(getDuplicateAttributeQuery(getUuid(tabgroup), extraDupeAttributes), new FetchCallback(){
+  fetchAll(getDuplicateAttributeQuery(uuidOld, extraDupeAttributes), new FetchCallback(){
     onFetch(result) {
       excludeAttributes = new ArrayList();
       excludeAttributes.add("Before Photo");
@@ -1717,7 +1751,7 @@ void loadTaskFrom(String uuid) {
 addOnEvent("Task/Task/Take_From_GPS", "click", "takePoint(\"Task\")");
 
 /* Takes the current point using gps. */
-takePoint(String tabgroup) {
+void takePoint(String tabgroup) {
   Map tabgroupToTabRef = new HashMap();
   tabgroupToTabRef.put("Task", "Task/Task/");
 
@@ -1758,7 +1792,7 @@ takePoint(String tabgroup) {
 }
 
 /* Sets the value of GPS views for the given tab path. */
-fillInGPS(String tabgroup) {
+void fillInGPS(String tabgroup) {
   Map tabgroupToTabRef = new HashMap();
   tabgroupToTabRef.put("Task", "Task/Task/");
 
@@ -1785,7 +1819,7 @@ fillInGPS(String tabgroup) {
   });
 }
 
-clearGpsInTabGroup(String tabgroup) {
+void clearGpsInTabGroup(String tabgroup) {
   Map tabgroupToTabRef = new HashMap();
   tabgroupToTabRef.put("Task", "Task/Task/");
 
@@ -1796,7 +1830,7 @@ clearGpsInTabGroup(String tabgroup) {
   clearGpsInTab(tabRef);
 }
 
-clearGpsInTab(String tabRef) {
+void clearGpsInTab(String tabRef) {
   setFieldValue(tabRef + "Accuracy"  , "");
   setFieldValue(tabRef + "Latitude"  , "");
   setFieldValue(tabRef + "Longitude" , "");
@@ -1830,7 +1864,7 @@ void populateMenuWithEntities (
     " WHERE relationshipid IN (SELECT relationshipid  " +
     "                            FROM latestnondeletedrelationship JOIN relntype USING (relntypeid) " +
     "                           WHERE relntypename = '"+relType+"') " +
-    "   AND parentuuid = " + parentUuid + " " +
+    "   AND parentuuid = '" + parentUuid + "' " +
     "   AND (childaenttypename = '"+entType+"' OR '"+entType+"' = '') " +
     " ORDER BY createdat DESC ";
 
@@ -1884,6 +1918,9 @@ void populateEntityListsInTabGroup(String tabGroup) {
   }
 }
 
+/* Populates each list containing records whose archent type is the same as that
+ * of `tabGroup`.
+ */
 void populateEntityListsOfArchEnt(String tabGroup) {
   if (isNull(tabGroup)) {
     return;
